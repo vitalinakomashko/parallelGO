@@ -1,10 +1,10 @@
 #' Main function for running GO analysis
 #'
 #' @param path The name of the fle which the data are to be read from
-#' @param col.names a logical value indicating whether the file contains the names
+#' @param col_names a logical value indicating whether the file contains the names
 #' of the variables as its first line
 #' @param delim The file field separator character.
-#' @param min.set.size Positive integer. If provided will be used to remove
+#' @param min_set_size Positive integer. If provided will be used to remove
 #'  all gene sets where then number of genes is fewer than \code{min.set.size}.
 #' @param id A character string specifying the type of gene identifier in the
 #'  data, must of be one of two "hugo" (default) or "ensembl".
@@ -17,11 +17,11 @@
 
 
 
-run_GO <- function(path, col.names, delim, min.set.size, species, id){
+run_GO <- function(path, col_names, delim, min_set_size, species, id){
   # read the file
-  dat <- read_file(path = path, col.names = col.names, delim = delim)
+  dat <- read_file(path = path, col_names = col_names, delim = delim)
   # do basic cleaning
-  dat <- clean_data(dat, min.set.size = min.set.size)
+  dat <- clean_data(dat, min_set_size = min_set_size)
   # map to Entrez Gene identifiers
   dat <- map_genes(dat, id, species)
   # run GO

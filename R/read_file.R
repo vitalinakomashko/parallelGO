@@ -29,7 +29,7 @@ read_file <- function(path, col_names, delim){
         )
       if (missing(col_names)) {
         stop("Please provide TRUE (present) or FALSE (absent) for the
-             'col.names' parameter.")
+             'col_names' parameter.")
       } else {
         col_names <- col_names
       }
