@@ -1,16 +1,25 @@
 Package: goparallel
-Title: What the Package Does (One Line, Title Case)
+Title: Parallel Extraction of GO Results
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Vitalina",
+           family = "Komashko",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
+           email = "vitalina@gmail.com")
+Description: Given a file with the list of genes and grouping indices it
+  extracts gene ontology results for each set. The package provides parallel
+  implementation.
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.
 Imports: 
-    magrittr
+    magrittr,
+    dplyr,
+    AnnotationDbi,
+    stringr,
+    crayon,
+    doParallel,
+    iterators,
+    GOstats
