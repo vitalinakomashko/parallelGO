@@ -9,7 +9,7 @@ Authors@R:
 Description: Given a file with the list of genes and grouping indices it
   extracts gene ontology results for each set. The package provides parallel
   implementation.
-License: What license it uses
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -23,3 +23,5 @@ Imports:
     doParallel,
     iterators,
     GOstats
+Suggests: 
+    testthat
