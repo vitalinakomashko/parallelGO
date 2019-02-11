@@ -23,12 +23,10 @@ read_file <- function(path, col_names, delim){
       stop("The file doesn't exist, please provide path to an existing file")
     } else {
       message(
-        stringr::str_wrap(
-          crayon::yellow("ATTENTION: For the file to be processed correctly
-                         ensure that the gene identifiers are in the first column
-                         and the gene set labels are in the second column.")
-          )
-          )
+        crayon::yellow("ATTENTION: For the file to be processed correctly,",
+                         "ensure that the gene identifiers are in the first",
+                         "column and the gene set labels are in the second column.")
+        )
       if (missing(col_names)) {
         stop("Please provide TRUE (present) or FALSE (absent) for the
              'col_names' parameter.")
@@ -65,9 +63,3 @@ read_file <- function(path, col_names, delim){
       }
   }
 
-
-# --------- create_universe ----------
-#' function to either bring a file with universe or read a file with universe
-create_universe <- function() {
-
-}

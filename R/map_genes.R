@@ -15,32 +15,32 @@
 
 map_genes <- function(dat, id = "hugo", species = "human"){
   # verify 'species' parameter
-  species <- verify_input(input.name = species,
-                          input.choices = c("human", "mouse"),
-                          input.default = "human")
+  species <- verify_input(input_name = species,
+                          input_choices = c("human", "mouse"),
+                          input_default = "human")
   # verify 'id' parameter
-  id <- verify_input(input.name = id, input.choices = c("hugo", "ensembl"),
-                     input.default = "hugo")
+  id <- verify_input(input_name = id, input_choices = c("hugo", "ensembl"),
+                     input_default = "hugo")
   if (species == "mouse") {
     if (id == "hugo") {
       xx <- AnnotationDbi::toTable(org.Mm.eg.db::org.Mm.egALIAS2EG)
-      colnames(xx) <- c("entrez", "maping_id")
+      colnames(xx) <- c("entrez", "mapping_id")
     } else {
       xx <- AnnotationDbi::toTable(org.Mm.eg.db::org.Mm.egENSEMBL)
-      colnames(xx) <- c("entrez", "maping_id")
+      colnames(xx) <- c("entrez", "mapping_id")
     }
   }
   if (species == "human") {
     if (id == "hugo") {
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egALIAS2EG)
-      colnames(xx) <- c("entrez", "maping_id")
+      colnames(xx) <- c("entrez", "mapping_id")
     } else {
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egENSEMBL)
       colnames(xx) <- c("entrez", "mapping_id")
     }
   }
   dat_with_genes <- merge(dat, xx, by.x = "id", by.y = "mapping_id")
-  dat_with_genes <- dat_with_genes[, c("entrez", "gene_set_label")]
+  dat_with_genes <- dat_with_genes[, c("entrez", "set_label")]
   if (nrow(dat_with_genes) == 0) {
     stop(
       stringr::str_wrap(

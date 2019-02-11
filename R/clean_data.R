@@ -3,16 +3,14 @@
 #' `clean_data` function removes duplicated rows, sets that have fewer genes
 #' than `min_set_size`.
 #'
-#' @param dat Data frame object with two columns: genes (`id`) and set labels (`set.name`),
-#'  output of the function \code{\link{read_data}} call.
-#' @param min_set_size Positive integer. If provided will be used to remove
-#'  all gene sets where then number of genes is fewer than \code{min.set.size}.
+#' @param dat Data frame object with two columns: genes (`id`) and set
+#'  labels (`set_label`), output of the function \code{\link{read_data}} call.
 #'
 #' @return Data frame object
 #' @export
 
 
-clean_data <- function(dat, min_set_size){
+clean_data <- function(dat){
   # check the data for duplicated rows
   if (any(duplicated(dat))) {
     message(
@@ -29,6 +27,25 @@ clean_data <- function(dat, min_set_size){
         )
       )
   }
+  return(dat)
+}
+
+
+#' Remove sets that have smaller number of members than provided threshold
+#'
+#' `remove_small_sets` function removes sets that have fewer genes
+#' than `min_set_size`.
+#'
+#' @param dat Data frame object with two columns: Entrez gene idenitifiers
+#'  (`id`) and set labels (`set_label`), output of the function
+#'  \code{\link{map_genes}} call.
+#' @param min_set_size Positive integer. If provided will be used to remove
+#'  all gene sets where then number of genes is fewer than \code{min_set_size}.
+#'
+#' @return Data frame object.
+#' @export
+
+remove_small_sets <- function(dat, min_set_size){
   # remove modules
   if (!missing(min_set_size)) {
     if (min_set_size <= 0){
@@ -41,9 +58,9 @@ clean_data <- function(dat, min_set_size){
       message(
         stringr::str_wrap(
           paste0("Total number of sets in the dataset is ",
-                 length(unique(dat$set.)), ".")
-          )
+                 length(unique(dat$set_label)), ".")
         )
+      )
       gene_count_by_set <- dat %>%
         dplyr::group_by(.data$set_label) %>%
         dplyr::summarise(n = n())
@@ -66,19 +83,19 @@ clean_data <- function(dat, min_set_size){
           stringr::str_wrap(
             crayon::yellow(
               paste0("ATTENTION: Removed sets where the number of genes is
-                      less than ", min_set_size, ". Number of rows after
-                      filtering is ", nrow(dat), ". Number of sets after
-                      filtering is ", length(unique(dat$set_label)), "."))
-            )
-          )
-      } else {
-        message("No sets will be removed.")
+                     less than ", min_set_size, ". Number of rows after
+                     filtering is ", nrow(dat), ". Number of sets after
+                     filtering is ", length(unique(dat$set_label)), "."))
+              )
+              )
+        } else {
+          message("No sets will be removed.")
       }
     }
-  } else {
-    message(
-      stringr::str_wrap("Parameter 'min_set_size' is not provided.
-                        No gene sets will be removed."))
-  }
+    } else {
+      message(
+        stringr::str_wrap("Parameter 'min_set_size' is not provided.
+                          No gene sets will be removed."))
+    }
   return(dat)
 }

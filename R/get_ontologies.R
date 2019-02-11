@@ -4,20 +4,20 @@
 #'
 #' @param gene_id set of unique Entrez Gene identifiers for which GO annotations
 #' need to be calculated
-#' @param background set of unique Entrez Gene identifiers
+#' @param universe set of unique Entrez Gene identifiers
 #' @param ontology a character string specifying the ontology, must be either "BP",
 #' "CC" or "MF"
-#' @param gene_set_label a string to add as a column to the final result. Might
+#' @param set_label a string to add as a column to the final result. Might
 #' be used as identification of the results in case there are many generated
 #' using this function
 #' @param annotation a string indicating annotation data package name
 #' shouldn't be exported or maybe it should?
 
 
-get_ontology <- function(gene_id, background, annotation,
-                         ontology, gene_set_label){
+get_ontology <- function(gene_id, universe, annotation,
+                         ontology, set_label){
   params <- new("GOHyperGParams", geneIds = gene_id,
-                universeGeneIds = background,
+                universeGeneIds = universe,
                 annotation = annotation,
                 ontology = ontology,
                 pvalueCutoff = 1,
@@ -29,9 +29,9 @@ get_ontology <- function(gene_id, background, annotation,
     dplyr::mutate(p_bonferroni = p.adjust(.data$Pvalue, method = "bonferroni"),
                   ontology = ontology)
   colnames(hg_over_results)[1] <- "GOID"
-  if (!missing(gene_set_label)) {
+  if (!missing(set_label)) {
     hg_over_results <- hg_over_results %>%
-      dplyr::mutate(gene_set_label = gene_set_label)
+      dplyr::mutate(set_label = set_label)
   }
   return(hg_over_results)
 }
@@ -40,31 +40,34 @@ get_ontology <- function(gene_id, background, annotation,
 
 #' Run gene ontology given a list of ENTREZ GENE IDs and backgroun
 #'
-#' Returns BP, MF and CC results without p value filtering
-#' @param dat data frame with 2 columns: gene_id and module. Module provides information
+#' Returns BP, MF and CC results without p value filtering, but with Bonferroni
+#' adjustment.
+#'
+#' @param dat data frame with two columns: gene_id and module. Module provides information
 #' about group assignment, gene_id is the list of ENTREZ GENE IDs. Module is useful
 #' for parallel computation
-#' @param background vector of unique ENTREZ gene ids to use as a background
+#' @param universe vector of unique ENTREZ gene ids to use as a background
 #' @param species a character string specifying the species, must be one of two "human"
 #' (default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
 #' human and 'org.Mm.eg.db' for mouse.
+#' @param ontology
 
 
-get_all_ontologies <- function(dat, background, species = c("human", "mouse"),
+get_all_ontologies <- function(dat, universe, species = c("human", "mouse"),
                                ontology){
   if (species == "human") {
     annotation <- "org.Hs.eg.db"
   } else {
     annotation <- "org.Mm.eg.db"
   }
-  genes <- unique(dat$gene_id)
-  module <- unique(dat$module)
-  res.list <- lapply(ontology, function(x) get_ontology(gene.id = genes,
-                                                        background = background,
+  genes <- unique(dat$entrez)
+  set_label <- unique(dat$set_label)
+  res_list <- lapply(ontology, function(x) get_ontology(gene_id = genes,
+                                                        universe = universe,
                                                         annotation = annotation,
                                                         ontology = x,
-                                                        module = module))
-  res.df <- do.call("rbind", res.list)
+                                                        module = set_label))
+  res.df <- do.call("rbind", res_list)
   return(res.df)
 }
 
@@ -72,15 +75,28 @@ get_all_ontologies <- function(dat, background, species = c("human", "mouse"),
 # --------- run_parallel_go ----------
 #' Run GO analysis on parallel
 #'
-#' @param annotation string providing the name of the annotation package to use,
-#'  Can we use anything else but the 'org.Hs.eg.db' forhuman and 'org.Mm.eg.db' for
-#'  mouse? I haven't investigated
-#'  @param ontology vector of ontologies for which to run the analysis. If not provided
-#' then the analysis will be run for all ontologies: CC, BP and MF
+#' This is a parallel implementation of the function to run GO analysis. The
+#' function will split the supplied data into pieces based on the unique values
+#' in the column "set_label" in the data and will send them to the "cores" for
+#' calculations.
+#'
+#'
+#' @param dat data frame with two columns: entrez and set_label. The column
+#'  "entrez" should contain Entrez gene identifiers; the column "set_label"
+#'  should contain labels for genes that will be analyzed as a group.
+#' @param species a character string specifying the species, must be one of two "human"
+#'  (default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
+#'  human and 'org.Mm.eg.db' for mouse
+#' @param ontology vector of ontologies for which to run the analysis. If not provided
+#'  then the analysis will be run for all ontologies: cellular component (CC),
+#'  biological process (BP) and molecular function (MF).
+#' @param cores numeric value representing the number of cores to use.
+#'
 
 
-run_parallel_go <- function(dat, background, species = c("human", "mouse"),
-                            cores, ontology){
+run_parallel_go <- function(dat, species = c("human", "mouse"),
+                            universe,
+                            ontology, cores){
   if (!missing(cores)) {
     doParallel::registerDoParallel(cores = cores)
     workers <- doParallel::getDoParWorkers()
@@ -101,12 +117,7 @@ run_parallel_go <- function(dat, background, species = c("human", "mouse"),
   species <- verify_input(input_name = species,
                           input_choices = c("human", "mouse"),
                           input_default = "human")
-  if (missing(background)) {
-    stop("Please provide a vector with Entrez Gene identifiers to serve
-         as a background")
-  } else {
-    background <- unique(background)
-  }
+  # currently universe is calculated using the full set of genes
   if (missing(ontology)) {
     ontologies <- c("BP", "CC", "MF")
   } else {
@@ -127,7 +138,7 @@ run_parallel_go <- function(dat, background, species = c("human", "mouse"),
                           .combine = rbind,
                           .packages = c("GOstats", "dplyr"),
                           .verbose = TRUE) %dopar% {
-                            get_all_ontologies(a, background = background,
+                            get_all_ontologies(a, universe = universe,
                                                species = species,
                                                ontology = ontologies)
                           }
