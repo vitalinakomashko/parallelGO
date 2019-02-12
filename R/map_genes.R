@@ -24,23 +24,31 @@ map_genes <- function(dat, id = "hugo", species = "human"){
   if (species == "mouse") {
     if (id == "hugo") {
       xx <- AnnotationDbi::toTable(org.Mm.eg.db::org.Mm.egALIAS2EG)
-      colnames(xx) <- c("entrez", "mapping_id")
     } else {
       xx <- AnnotationDbi::toTable(org.Mm.eg.db::org.Mm.egENSEMBL)
-      colnames(xx) <- c("entrez", "mapping_id")
     }
   }
   if (species == "human") {
     if (id == "hugo") {
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egALIAS2EG)
-      colnames(xx) <- c("entrez", "mapping_id")
     } else {
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egENSEMBL)
-      colnames(xx) <- c("entrez", "mapping_id")
     }
   }
-  dat_with_genes <- merge(dat, xx, by.x = "id", by.y = "mapping_id")
-  dat_with_genes <- dat_with_genes[, c("entrez", "set_label")]
+  colnames(xx) <- c("entrez", "mapping_id")
+  # since there could be multiple matches, do alphabetic sort
+  xx <- xx[order(xx$mapping_id), ]
+  # match ids in the data to the mapping_id in the annotation data
+  # frame extracting only the first match
+  k <- match(dat$id, xx$mapping_id)
+  dat_with_match <- dplyr::mutate(dat, index = k)
+  # remove rows without any match if such are available
+  if(any(is.na(k))){
+    dat_with_match <- dat_with_match[!is.na(dat_with_match$index), ]
+  }
+  # add the matched entrez ID and select relevant columns
+  dat_with_genes <- dplyr::bind_cols(dat_with_match, xx[dat_with_match$index, ]) %>%
+    dplyr::select(.data$entrez, .data$set_label)
   if (nrow(dat_with_genes) == 0) {
     stop(
       stringr::str_wrap(
