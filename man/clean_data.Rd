@@ -4,14 +4,11 @@
 \alias{clean_data}
 \title{Basic data cleaning before gene mapping}
 \usage{
-clean_data(dat, min_set_size)
+clean_data(dat)
 }
 \arguments{
-\item{dat}{Data frame object with two columns: genes (\code{id}) and set labels (\code{set.name}),
-output of the function \code{\link{read_data}} call.}
-
-\item{min_set_size}{Positive integer. If provided will be used to remove
-all gene sets where then number of genes is fewer than \code{min.set.size}.}
+\item{dat}{Data frame object with two columns: genes (\code{id}) and set
+labels (\code{set_label}), output of the function \code{\link{read_data}} call.}
 }
 \value{
 Data frame object

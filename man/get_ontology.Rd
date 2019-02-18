@@ -4,13 +4,13 @@
 \alias{get_ontology}
 \title{Run analysis for a specified ontology}
 \usage{
-get_ontology(gene_id, background, annotation, ontology, gene_set_label)
+get_ontology(gene_id, universe, annotation, ontology, set_label)
 }
 \arguments{
 \item{gene_id}{set of unique Entrez Gene identifiers for which GO annotations
 need to be calculated}
 
-\item{background}{set of unique Entrez Gene identifiers}
+\item{universe}{set of unique Entrez Gene identifiers}
 
 \item{annotation}{a string indicating annotation data package name
 shouldn't be exported or maybe it should?}
@@ -18,7 +18,7 @@ shouldn't be exported or maybe it should?}
 \item{ontology}{a character string specifying the ontology, must be either "BP",
 "CC" or "MF"}
 
-\item{gene_set_label}{a string to add as a column to the final result. Might
+\item{set_label}{a string to add as a column to the final result. Might
 be used as identification of the results in case there are many generated
 using this function}
 }

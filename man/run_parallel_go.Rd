@@ -4,16 +4,27 @@
 \alias{run_parallel_go}
 \title{Run GO analysis on parallel}
 \usage{
-run_parallel_go(dat, background, species = c("human", "mouse"), cores,
-  ontology)
+run_parallel_go(dat, species = c("human", "mouse"), universe, ontology,
+  cores)
 }
 \arguments{
-\item{annotation}{string providing the name of the annotation package to use,
-Can we use anything else but the 'org.Hs.eg.db' forhuman and 'org.Mm.eg.db' for
-mouse? I haven't investigated
-@param ontology vector of ontologies for which to run the analysis. If not provided
-then the analysis will be run for all ontologies: CC, BP and MF}
+\item{dat}{data frame with two columns: entrez and set_label. The column
+"entrez" should contain Entrez gene identifiers; the column "set_label"
+should contain labels for genes that will be analyzed as a group.}
+
+\item{species}{a character string specifying the species, must be one of two "human"
+(default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
+human and 'org.Mm.eg.db' for mouse}
+
+\item{ontology}{vector of ontologies for which to run the analysis. If not provided
+then the analysis will be run for all ontologies: cellular component (CC),
+biological process (BP) and molecular function (MF).}
+
+\item{cores}{numeric value representing the number of cores to use.}
 }
 \description{
-Run GO analysis on parallel
+This is a parallel implementation of the function to run GO analysis. The
+function will split the supplied data into pieces based on the unique values
+in the column "set_label" in the data and will send them to the "cores" for
+calculations.
 }
