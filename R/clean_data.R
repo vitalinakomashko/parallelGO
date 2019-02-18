@@ -26,6 +26,12 @@ clean_data <- function(dat){
                nrow(dat), ".")
         )
       )
+  } else {
+    message(
+      stringr::str_wrap(
+        crayon::green("No duplicate rows have been identified.")
+        )
+      )
   }
   return(dat)
 }
