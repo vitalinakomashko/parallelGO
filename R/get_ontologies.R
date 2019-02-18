@@ -28,7 +28,9 @@ get_ontology <- function(gene_id, universe, annotation,
   hg_over_results <- hg_over_results %>%
     dplyr::mutate(p_bonferroni = p.adjust(.data$Pvalue, method = "bonferroni"),
                   ontology = ontology)
-  colnames(hg_over_results)[1] <- "GOID"
+  # rename the columns
+  colnames(hg_over_results)[1:7] <- c("goid", "pvalue", "odds_ratio",
+                                      "exp_count", "count", "size", "term")
   if (!missing(set_label)) {
     hg_over_results <- hg_over_results %>%
       dplyr::mutate(set_label = set_label)
@@ -38,37 +40,44 @@ get_ontology <- function(gene_id, universe, annotation,
 
 # --------- get_all_ontologies ----------
 
-#' Run gene ontology given a list of ENTREZ GENE IDs and backgroun
+#' Perform GO enrichment given the list of ontologies.
 #'
-#' Returns BP, MF and CC results without p value filtering, but with Bonferroni
-#' adjustment.
+#' Returns GO enrichment results for all specified GO  without p value filtering,
+#' but with Bonferroni adjustment.
 #'
-#' @param dat data frame with two columns: gene_id and module. Module provides information
-#' about group assignment, gene_id is the list of ENTREZ GENE IDs. Module is useful
-#' for parallel computation
-#' @param universe vector of unique ENTREZ gene ids to use as a background
-#' @param species a character string specifying the species, must be one of two "human"
-#' (default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
-#' human and 'org.Mm.eg.db' for mouse.
-#' @param ontology
-
+#' @param dat Vector with the list of ENTREZ gene identifiers.
+#'
+#' @param universe Vector of unique ENTREZ gene ids to be used as a background.
+#'
+#' @param species Character string specifying the species, must be one of two
+#'  "human" (default) or "mouse". This will define which Bioconductor package
+#'  is used as a source of GO annotations. For human we use "org.Hs.eg.db", and
+#'  for mouse we use "org.Mm.eg.db".
+#'
+#' @param ontologies Character string specifying one to three ontologies:
+#'  "MF", "BP" or "CC".
+#'
+#' @param set_label Character string specifying the label characterizing the
+#'  set of genes being analyzed.
+#'
+#' @return Data frame with the results of GO enrichment and a column populated
+#'  with the provided "set_label".
+#'
+#' @export
 
 get_all_ontologies <- function(dat, universe, species = c("human", "mouse"),
-                               ontology){
+                               ontologies, set_label){
   if (species == "human") {
     annotation <- "org.Hs.eg.db"
   } else {
     annotation <- "org.Mm.eg.db"
   }
-  genes <- unique(dat$entrez)
-  set_label <- unique(dat$set_label)
-  res_list <- lapply(ontology, function(x) get_ontology(gene_id = genes,
+  res_list <- lapply(ontologies, function(x) get_ontology(gene_id = dat,
                                                         universe = universe,
                                                         annotation = annotation,
                                                         ontology = x,
-                                                        module = set_label))
-  res.df <- do.call("rbind", res_list)
-  return(res.df)
+                                                        set_label = set_label))
+  res.df <- base::do.call("rbind", res_list)
 }
 
 
@@ -99,18 +108,18 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
                             ontology, cores){
   if (!missing(cores)) {
     doParallel::registerDoParallel(cores = cores)
-    workers <- doParallel::getDoParWorkers()
+    workers <- foreach::getDoParWorkers()
     message(
       stringr::str_wrap(
-        paste0("Will run GO computation on ", workers, ".")
+        paste0("Will run GO computation on ", workers, " cores.")
       )
     )
   } else {
     doParallel::registerDoParallel()
-    workers <- doParallel::getDoParWorkers()
+    workers <- foreach::getDoParWorkers()
     message(
       stringr::str_wrap(
-        paste0("Will run GO computation on ", workers, ".")
+        paste0("Will run GO computation on ", workers, " cores.")
       )
     )
   }
@@ -133,15 +142,18 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
       ontologies <- ontology
     }
   }
-  iterated_df <- iterators::isplit(dat, dat$module)
-  res <- foreach::foreach(a = iterated_df,
-                          .combine = rbind,
-                          .packages = c("GOstats", "dplyr"),
+  iterated_df <- iterators::isplit(dat, as.factor(dat$set_label))
+  # to prevent complaining that that %dopar% is not found
+  `%dopar%` <- foreach::`%dopar%`
+  res <- foreach::foreach(a = iterated_df, .combine = rbind,
                           .verbose = TRUE) %dopar% {
-                            get_all_ontologies(a, universe = universe,
+                            get_all_ontologies(a$value$entrez,
                                                species = species,
-                                               ontology = ontologies)
-                          }
+                                               universe = universe,
+                                               ontologies = ontologies,
+                                               set_label = a$key[[1]])
+                            }
   return(res)
-}
+  }
+
 
