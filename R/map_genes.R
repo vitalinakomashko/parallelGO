@@ -35,6 +35,10 @@ map_genes <- function(dat, id = "hugo", species = "human"){
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egENSEMBL)
     }
   }
+  # check if ensembl id has versions in it and remove them
+  if (id == "ensembl") {
+    dat$id <- stringr::str_remove(dat$id, "\\..{1,}")
+  }
   colnames(xx) <- c("entrez", "mapping_id")
   # since there could be multiple matches, do alphabetic sort
   xx <- xx[order(xx$mapping_id), ]
