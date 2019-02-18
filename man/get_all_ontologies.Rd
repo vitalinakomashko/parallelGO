@@ -2,23 +2,32 @@
 % Please edit documentation in R/get_ontologies.R
 \name{get_all_ontologies}
 \alias{get_all_ontologies}
-\title{Run gene ontology given a list of ENTREZ GENE IDs and backgroun}
+\title{Perform GO enrichment given the list of ontologies.}
 \usage{
 get_all_ontologies(dat, universe, species = c("human", "mouse"),
-  ontology)
+  ontologies, set_label)
 }
 \arguments{
-\item{dat}{data frame with two columns: gene_id and module. Module provides information
-about group assignment, gene_id is the list of ENTREZ GENE IDs. Module is useful
-for parallel computation}
+\item{dat}{Vector with the list of ENTREZ gene identifiers.}
 
-\item{universe}{vector of unique ENTREZ gene ids to use as a background}
+\item{universe}{Vector of unique ENTREZ gene ids to be used as a background.}
 
-\item{species}{a character string specifying the species, must be one of two "human"
-(default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
-human and 'org.Mm.eg.db' for mouse.}
+\item{species}{Character string specifying the species, must be one of two
+"human" (default) or "mouse". This will define which Bioconductor package
+is used as a source of GO annotations. For human we use "org.Hs.eg.db", and
+for mouse we use "org.Mm.eg.db".}
+
+\item{ontologies}{Character string specifying one to three ontologies:
+"MF", "BP" or "CC".}
+
+\item{set_label}{Character string specifying the label characterizing the
+set of genes being analyzed.}
+}
+\value{
+Data frame with the results of GO enrichment and a column populated
+with the provided "set_label".
 }
 \description{
-Returns BP, MF and CC results without p value filtering, but with Bonferroni
-adjustment.
+Returns GO enrichment results for all specified GO  without p value filtering,
+but with Bonferroni adjustment.
 }
