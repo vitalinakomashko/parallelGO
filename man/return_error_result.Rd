@@ -14,7 +14,7 @@ Data frame with 1 row.
 as the regular output of get_ontology. The column \strong{count} is
 represented by the number of genes, the column \strong{term} provides the
 message, and the column \strong{set_label} provides the label of the gene set
-for which a condition was encountered.
+for which a condition was encountered. This is an internal function.
 }
 \seealso{
 \code{\link{run_parallel_go}}, \code{\link{remove_errors}},

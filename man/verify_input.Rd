@@ -2,10 +2,27 @@
 % Please edit documentation in R/not_exported.R
 \name{verify_input}
 \alias{verify_input}
-\title{Supporting function for verifying function parameters}
+\title{Verify validity of the provided function input.}
 \usage{
 verify_input(input_name, input_choices, input_default)
 }
+\arguments{
+\item{input_name}{String containing the parameter name.}
+
+\item{input_choices}{String containing the possible choices.}
+
+\item{input_default}{String containing the default parameter.}
+}
+\value{
+String
+}
 \description{
-Not to be used by the user. Not exported
+\code{verify_input} provides checks given the name of the input parameter,
+possible choices and the default choice.  If the \code{input_name} is
+not missing and is valid it is then returned; if the \code{input_name} is not
+missing and not valid the execution is stopped; if the \code{input_name} is missing
+the \code{input_default} is then returned. This is an internal function.
+}
+\seealso{
+\code{\link{map_genes}}, \code{\link{run_parallel_go}}.
 }

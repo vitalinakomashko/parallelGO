@@ -13,7 +13,7 @@ remove_errors(dat)
 Data frame.
 }
 \description{
-\code{remove_errors} removes rows in the output of get_all_ontologies for sets
+\code{remove_errors} removes rows in the output of \code{get_all_ontologies} for sets
 which generated errors or warnings. Also provides a helpful message listing
 the labels of the removed sets. This is an internal function.
 }
