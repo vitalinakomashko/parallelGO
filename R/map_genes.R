@@ -1,16 +1,20 @@
-#' Map gene identifiers to Entrez Gene identifiers.
+#' Map gene identifiers to ENTREZ gene
 #'
-#' @param dat Data frame with two columns: `id` (genes) and `set.label` (gene
-#'  sets labels). The data frame is supposed to be returned by the call to the
-#'  function \code{\link{clean_data}}.
+#' `map_genes` provides mapping to ENTREZ gene identifiers for Hugo or Ensembl
+#' gene identifiers using either org.Mm.eg.db or org.Mm.eg.db Bioconductor
+#' annotation packages.
+#'
+#' @param dat Data frame with two columns: \strong{id} and \strong{set_label}.
+#'
 #' @param id A character string specifying the type of gene identifier in the
 #'  data, must of be one of two "hugo" (default) or "ensembl".
+#'
 #' @param species A character string specifying the species, must be one of two
-#'  "human" (default) or "mouse". For mapping to Entrez Gene identifiers we use
-#'  'org.Hs.eg.db' (human) and 'org.Mm.eg.db' (mouse) Bioconductor annotation
-#'  packages.
-#' @return Data frame with an additional column `entrez` (column with the
-#' original identifiers will be removed).
+#'  "human" (default) or "mouse".
+#'
+#' @return Data frame with two columns: \strong{entrez} and \strong{set_label}.
+#' The column with the original identifiers is removed.
+#'
 #' @export
 
 map_genes <- function(dat, id = "hugo", species = "human"){
@@ -51,13 +55,14 @@ map_genes <- function(dat, id = "hugo", species = "human"){
     dat_with_match <- dat_with_match[!is.na(dat_with_match$index), ]
   }
   # add the matched entrez ID and select relevant columns
-  dat_with_genes <- dplyr::bind_cols(dat_with_match, xx[dat_with_match$index, ]) %>%
+  dat_with_genes <- dplyr::bind_cols(dat_with_match,
+                                     xx[dat_with_match$index, ]) %>%
     dplyr::select(.data$entrez, .data$set_label)
   if (nrow(dat_with_genes) == 0) {
     stop(
       stringr::str_wrap(
         crayon::red(
-          paste0("The number of rows after mapping identifiers to Entrez Gene
+          paste0("ERROR: The number of rows after mapping identifiers to Entrez Gene
                 identifiers is 0. Please verify that you used correct input
                 values for 'species' and 'id' parameters. You used ",
                 crayon::underline(species), " for the 'species' parameter and ",
@@ -79,24 +84,30 @@ map_genes <- function(dat, id = "hugo", species = "human"){
           )
         )
       )
+    return(dat_with_genes)
   } else {
     message(
       stringr::str_wrap(
-        paste0("Performed mapping to Entrez Gene identifiers. ",
-               nrow(dat_with_genes), " out of the original ",
-             nrow(dat), " identifiers were mapped.")
+        crayon::green(
+          paste0("SUCCESS: Performed mapping to ENTREZ gene identifiers. ",
+                 crayon::underline(nrow(dat_with_genes)),
+                 " out of the original ",
+                 crayon::underline(nrow(dat)), " identifiers were mapped.")
         )
       )
+    )
     if (any(duplicated(dat_with_genes))) {
       dat_with_genes <- unique(dat_with_genes)
       message(
         stringr::str_wrap(
-          paste0("Removed duplicated rows after mapping to Entrez Gene
-                 identifiers. ",
-                 nrow(dat_with_genes),
-                 " rows remained.")
+          crayon::yellow(
+            paste0("ATTENTION: Removed duplicated rows after mapping to ENTREZ",
+                   " gene identifiers. ",
+                   crayon::underline(nrow(dat_with_genes)),
+                   " rows remained.")
           )
         )
+      )
     }
     return(dat_with_genes)
   }

@@ -2,27 +2,25 @@
 % Please edit documentation in R/map_genes.R
 \name{map_genes}
 \alias{map_genes}
-\title{Map gene identifiers to Entrez Gene identifiers.}
+\title{Map gene identifiers to ENTREZ gene}
 \usage{
 map_genes(dat, id = "hugo", species = "human")
 }
 \arguments{
-\item{dat}{Data frame with two columns: \code{id} (genes) and \code{set.label} (gene
-sets labels). The data frame is supposed to be returned by the call to the
-function \code{\link{clean_data}}.}
+\item{dat}{Data frame with two columns: \strong{id} and \strong{set_label}.}
 
 \item{id}{A character string specifying the type of gene identifier in the
 data, must of be one of two "hugo" (default) or "ensembl".}
 
 \item{species}{A character string specifying the species, must be one of two
-"human" (default) or "mouse". For mapping to Entrez Gene identifiers we use
-'org.Hs.eg.db' (human) and 'org.Mm.eg.db' (mouse) Bioconductor annotation
-packages.}
+"human" (default) or "mouse".}
 }
 \value{
-Data frame with an additional column \code{entrez} (column with the
-original identifiers will be removed).
+Data frame with two columns: \strong{entrez} and \strong{set_label}.
+The column with the original identifiers is removed.
 }
 \description{
-Map gene identifiers to Entrez Gene identifiers.
+\code{map_genes} provides mapping to ENTREZ gene identifiers for Hugo or Ensembl
+gene identifiers using either org.Mm.eg.db or org.Mm.eg.db Bioconductor
+annotation packages.
 }
