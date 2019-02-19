@@ -1,13 +1,17 @@
 #' Map gene identifiers to ENTREZ gene
 #'
-#' `map_genes` provides mapping to ENTREZ gene identifiers for Hugo or Ensembl
-#' gene identifiers using either org.Mm.eg.db or org.Mm.eg.db Bioconductor
-#' annotation packages.
+#' \code{map_genes} provides mapping to ENTREZ gene identifiers for Hugo or Ensembl
+#' gene identifiers using either \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db} or \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} Bioconductor annotation
+#' packages. Function \code{\link[AnnotationDb]{toTable}} is used to
+#' extract the mappings. We use org.Xx.eg.db::org.Xx.egALIAS2EG for the mappings
+#' between the common gene symbol idenditifers and org.Xx.eg.db::org.Xx.egENSEMBL for
+#' the mappings between ENTREZ Gene identifiers and Exnsembl gene
+#' accession numbers.
 #'
 #' @param dat Data frame with two columns: \strong{id} and \strong{set_label}.
 #'
 #' @param id A character string specifying the type of gene identifier in the
-#'  data, must of be one of two "hugo" (default) or "ensembl".
+#'  data, must of be one of two "symbol" (default) or "ensembl".
 #'
 #' @param species A character string specifying the species, must be one of two
 #'  "human" (default) or "mouse".
@@ -17,23 +21,23 @@
 #'
 #' @export
 
-map_genes <- function(dat, id = "hugo", species = "human"){
+map_genes <- function(dat, id = "symbol", species = "human"){
   # verify 'species' parameter
   species <- verify_input(input_name = species,
                           input_choices = c("human", "mouse"),
                           input_default = "human")
   # verify 'id' parameter
-  id <- verify_input(input_name = id, input_choices = c("hugo", "ensembl"),
-                     input_default = "hugo")
+  id <- verify_input(input_name = id, input_choices = c("symbol", "ensembl"),
+                     input_default = "symbol")
   if (species == "mouse") {
-    if (id == "hugo") {
+    if (id == "symbol") {
       xx <- AnnotationDbi::toTable(org.Mm.eg.db::org.Mm.egALIAS2EG)
     } else {
       xx <- AnnotationDbi::toTable(org.Mm.eg.db::org.Mm.egENSEMBL)
     }
   }
   if (species == "human") {
-    if (id == "hugo") {
+    if (id == "symbol") {
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egALIAS2EG)
     } else {
       xx <- AnnotationDbi::toTable(org.Hs.eg.db::org.Hs.egENSEMBL)
@@ -62,11 +66,12 @@ map_genes <- function(dat, id = "hugo", species = "human"){
     stop(
       stringr::str_wrap(
         crayon::red(
-          paste0("ERROR: The number of rows after mapping identifiers to Entrez Gene
-                identifiers is 0. Please verify that you used correct input
-                values for 'species' and 'id' parameters. You used ",
-                crayon::underline(species), " for the 'species' parameter and ",
-                crayon::underline(id), " for the 'id' parameter.")
+          paste0("ERROR: The number of rows after mapping identifiers to ENTREZ",
+                 " gene identifiers is 0. Please verify that you used correct",
+                 " input values for 'species' and 'id' parameters. You used ",
+                 crayon::underline(species),
+                 " for the 'species' parameter and ",
+                 crayon::underline(id), " for the 'id' parameter.")
           )
         )
       )
@@ -75,7 +80,7 @@ map_genes <- function(dat, id = "hugo", species = "human"){
       stringr::str_wrap(
         crayon::yellow(
           paste0("ATTENTION: The number of rows after mapping identifiers
-                  to Entrez Gene identifiers is significantly smaller than
+                  to ENTREZ gene identifiers is significantly smaller than
                   in the original data provided. Please verify that you used
                   correct input values for 'species' or 'id' parameters.
                   You used ", crayon::underline(species), " for the 'species'

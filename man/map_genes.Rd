@@ -4,13 +4,13 @@
 \alias{map_genes}
 \title{Map gene identifiers to ENTREZ gene}
 \usage{
-map_genes(dat, id = "hugo", species = "human")
+map_genes(dat, id = "symbol", species = "human")
 }
 \arguments{
 \item{dat}{Data frame with two columns: \strong{id} and \strong{set_label}.}
 
 \item{id}{A character string specifying the type of gene identifier in the
-data, must of be one of two "hugo" (default) or "ensembl".}
+data, must of be one of two "symbol" (default) or "ensembl".}
 
 \item{species}{A character string specifying the species, must be one of two
 "human" (default) or "mouse".}
@@ -21,6 +21,10 @@ The column with the original identifiers is removed.
 }
 \description{
 \code{map_genes} provides mapping to ENTREZ gene identifiers for Hugo or Ensembl
-gene identifiers using either org.Mm.eg.db or org.Mm.eg.db Bioconductor
-annotation packages.
+gene identifiers using either \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db} or \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} Bioconductor annotation
+packages. Function \code{\link[AnnotationDb]{toTable}} is used to
+extract the mappings. We use org.Xx.eg.db::org.Xx.egALIAS2EG for the mappings
+between the common gene symbol idenditifers and org.Xx.eg.db::org.Xx.egENSEMBL for
+the mappings between ENTREZ Gene identifiers and Exnsembl gene
+accession numbers.
 }
