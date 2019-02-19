@@ -2,32 +2,37 @@
 % Please edit documentation in R/get_ontologies.R
 \name{get_all_ontologies}
 \alias{get_all_ontologies}
-\title{Perform GO enrichment given the list of ontologies.}
+\title{Perform GO enrichment analysis for a list of ontologies.}
 \usage{
-get_all_ontologies(dat, universe, species = c("human", "mouse"),
+get_all_ontologies(gene_id, universe, species = c("human", "mouse"),
   ontologies, set_label)
 }
 \arguments{
-\item{dat}{Vector with the list of ENTREZ gene identifiers.}
+\item{gene_id}{Character vector of unique ENTREZ gene identifiers of
+interest.}
 
-\item{universe}{Vector of unique ENTREZ gene ids to be used as a background.}
+\item{universe}{Character vector of unique ENTREZ gene identifiers to be used
+as a universe.}
 
 \item{species}{Character string specifying the species, must be one of two
 "human" (default) or "mouse". This will define which Bioconductor package
-is used as a source of GO annotations. For human we use "org.Hs.eg.db", and
-for mouse we use "org.Mm.eg.db".}
+is used as a source of GO annotations. For human we use
+\href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db}, and for mouse \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db}.}
 
-\item{ontologies}{Character string specifying one to three ontologies:
-"MF", "BP" or "CC".}
+\item{ontologies}{Character vector specifying ontologies of interest, such
+as "MF", "BP" and "CC".}
 
 \item{set_label}{Character string specifying the label characterizing the
-set of genes being analyzed.}
+set of genes being analyzed. This parameter is optional.}
 }
 \value{
-Data frame with the results of GO enrichment and a column populated
-with the provided "set_label".
+Data frame with the results of GO enrichment and an optional column
+populated with the provided "set_label".
 }
 \description{
-Returns GO enrichment results for all specified GO  without p value filtering,
-but with Bonferroni adjustment.
+\code{get_all_ontologies} loops through the list of ontologies and calls
+\code{get_ontology} for each.
+}
+\seealso{
+\code{get_ontology} to understand the output format.
 }

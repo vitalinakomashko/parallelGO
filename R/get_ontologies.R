@@ -1,17 +1,38 @@
 # --------- get_ontology ----------
 
-#' Run analysis for a specified ontology
+#' Run GO enrichment analysis for a specified ontology.
 #'
-#' @param gene_id set of unique Entrez Gene identifiers for which GO annotations
-#' need to be calculated
-#' @param universe set of unique Entrez Gene identifiers
-#' @param ontology a character string specifying the ontology, must be either "BP",
-#' "CC" or "MF"
-#' @param set_label a string to add as a column to the final result. Might
-#' be used as identification of the results in case there are many generated
-#' using this function
-#' @param annotation a string indicating annotation data package name
-#' shouldn't be exported or maybe it should?
+#' \code{get_ontology} uses \code{\link[GOstats]{hyperGTest}} to calculate
+#' hypergeometric statistics (for over-represenation of each GO term);
+#' \code{\link[GOstats]{summary}} to return the summarized results with adjusted
+#' p values using \code{\link[stats]{p.adjust}} function and method
+#' "bonferroni".
+#'
+#' @param gene_id Character vector of unique ENTREZ gene identifiers of
+#'  interest.
+#'
+#' @param universe Character vector of unique ENTREZ gene identifiers to be used
+#'  as a universe.
+#'
+#' @param ontology Character string specifying the ontology, must be either
+#'  "BP", "CC" or "MF".
+#'
+#' @param set_label Character string used to populate the column
+#'  \strong{set_label}. This parameter is optional. It is used for
+#'  identification of results when \code{get_ontology} is used in a loop.
+#'
+#' @param annotation Character string with the name of the annotation data
+#'  package.
+#'
+#' @return Data frame with the following columns: \strong{goid},
+#'  \strong{pvalue}, \strong{odds_ratio}, \strong{exp_count}, \strong{count},
+#'  \strong{size}, \strong{term}, \strong{p_bonferroni}, \strong{ontology},
+#'  \strong{set_label} (if provided).
+#'
+#' @seealso \code{\link[GOstats]{hyperGTest}},
+#' \code{\link[GOstats]{summary,GOHyperGResult-method}}.
+#'
+#' @export
 
 
 get_ontology <- function(gene_id, universe, annotation,
@@ -26,7 +47,7 @@ get_ontology <- function(gene_id, universe, annotation,
   hg_over_test <- GOstats::hyperGTest(params)
   hg_over_results <- GOstats::summary(hg_over_test)
   hg_over_results <- hg_over_results %>%
-    dplyr::mutate(p_bonferroni = p.adjust(.data$Pvalue, method = "bonferroni"),
+    dplyr::mutate(p_bonferroni = stats::p.adjust(.data$Pvalue, method = "bonferroni"),
                   ontology = ontology)
   # rename the columns
   colnames(hg_over_results)[1:7] <- c("goid", "pvalue", "odds_ratio",
@@ -40,78 +61,101 @@ get_ontology <- function(gene_id, universe, annotation,
 
 # --------- get_all_ontologies ----------
 
-#' Perform GO enrichment given the list of ontologies.
+#' Perform GO enrichment analysis for a list of ontologies.
 #'
-#' Returns GO enrichment results for all specified GO  without p value filtering,
-#' but with Bonferroni adjustment.
+#' \code{get_all_ontologies} loops through the list of ontologies and calls
+#' \code{get_ontology} for each.
 #'
-#' @param dat Vector with the list of ENTREZ gene identifiers.
+#' @param gene_id Character vector of unique ENTREZ gene identifiers of
+#'  interest.
 #'
-#' @param universe Vector of unique ENTREZ gene ids to be used as a background.
+#' @param universe Character vector of unique ENTREZ gene identifiers to be used
+#'  as a universe.
 #'
 #' @param species Character string specifying the species, must be one of two
 #'  "human" (default) or "mouse". This will define which Bioconductor package
-#'  is used as a source of GO annotations. For human we use "org.Hs.eg.db", and
-#'  for mouse we use "org.Mm.eg.db".
+#'  is used as a source of GO annotations. For human we use
+#'  \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db}, and for mouse \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db}.
 #'
-#' @param ontologies Character string specifying one to three ontologies:
-#'  "MF", "BP" or "CC".
+#' @param ontologies Character vector specifying ontologies of interest, such
+#'  as "MF", "BP" and "CC".
 #'
 #' @param set_label Character string specifying the label characterizing the
-#'  set of genes being analyzed.
+#'  set of genes being analyzed. This parameter is optional.
 #'
-#' @return Data frame with the results of GO enrichment and a column populated
-#'  with the provided "set_label".
+#' @return Data frame with the results of GO enrichment and an optional column
+#'  populated with the provided "set_label".
+#'
+#' @seealso \code{get_ontology} to understand the output format.
 #'
 #' @export
 
-get_all_ontologies <- function(dat, universe, species = c("human", "mouse"),
+get_all_ontologies <- function(gene_id, universe, species = c("human", "mouse"),
                                ontologies, set_label){
   if (species == "human") {
     annotation <- "org.Hs.eg.db"
   } else {
     annotation <- "org.Mm.eg.db"
   }
-  res_list <- lapply(ontologies, function(x) get_ontology(gene_id = dat,
+  res_list <- base::lapply(ontologies, function(x) get_ontology(gene_id = gene_id,
                                                         universe = universe,
                                                         annotation = annotation,
                                                         ontology = x,
                                                         set_label = set_label))
   res.df <- base::do.call("rbind", res_list)
+  return(res.df)
 }
 
 
 # --------- run_parallel_go ----------
-#' Run GO analysis on parallel
+#' Run GO analysis on parallel.
 #'
-#' This is a parallel implementation of the function to run GO analysis. The
-#' function will split the supplied data into pieces based on the unique values
-#' in the column "set_label" in the data and will send them to the "cores" for
-#' calculations.
+#' \code{run_parallel_go} splits provided data frame into a list of data frames
+#' based on the values in the column \strong{set_label} and
+#' using \code{\link[iterators]{isplit}} function. It then runs
+#' \code{get_all_ontologies} in parallel using \pkg{foreach} by sending each
+#' data frame onto a worker.
 #'
+#' @param dat Data frame with two columns: \strong{entrez} and
+#'  \strong{set_label}. The column \strong{entrez} should contain ENTREZ gene
+#'  identifiers; the column \strong{set_label} should contain labels for
+#'  identifiers that will be analyzed as a group.
 #'
-#' @param dat data frame with two columns: entrez and set_label. The column
-#'  "entrez" should contain Entrez gene identifiers; the column "set_label"
-#'  should contain labels for genes that will be analyzed as a group.
-#' @param species a character string specifying the species, must be one of two "human"
-#'  (default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
-#'  human and 'org.Mm.eg.db' for mouse
-#' @param ontology vector of ontologies for which to run the analysis. If not provided
-#'  then the analysis will be run for all ontologies: cellular component (CC),
-#'  biological process (BP) and molecular function (MF).
-#' @param cores numeric value representing the number of cores to use.
+#' @param species Character string specifying the species, must be one of two
+#'  "human" (default) or "mouse". For GO analysis we use
+#'  \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db}, and for mouse \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db}.
 #'
+#' @param universe Character vector of unique ENTREZ gene identifiers to be used
+#'  as a universe.
+#'
+#' @param ontologies Character vector of ontologies for which to run the
+#'  analysis. If not provided the analysis will be run for all ontologies:
+#'  cellular component (CC), biological process (BP) and molecular function
+#'  (MF).
+#'
+#' @param cores Integer value representing the number of cores to use. This
+#'  parameter is optional. If not provided
+#'  \code{\link[foreach]{getDoParWorkers}} function will be called to determine
+#'  the number of workers.
+#'
+#' @return Data frame with the results of GO enrichment.
+#'
+#' @seealso \code{get_ontology} to understand the output format.
+#'
+#' @export
 
 
 run_parallel_go <- function(dat, species = c("human", "mouse"),
                             universe,
-                            ontology, cores){
+                            ontologies, cores){
   if (!missing(cores)) {
     doParallel::registerDoParallel(cores = cores)
     workers <- foreach::getDoParWorkers()
     message(
       stringr::str_wrap(
-        paste0("Will run GO computation on ", workers, " cores.")
+        crayon::green(
+          paste0("Will run GO computation on ", workers, " cores.")
+        )
       )
     )
   } else {
@@ -119,41 +163,61 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
     workers <- foreach::getDoParWorkers()
     message(
       stringr::str_wrap(
-        paste0("Will run GO computation on ", workers, " cores.")
+        crayon::green(
+          paste0("Parameter 'cores' is not provided. Getting the number of
+               available cores vis foreach::getDoParWorkers(). Will run GO
+               computation on ", workers, " cores.")
+        )
       )
     )
   }
   species <- verify_input(input_name = species,
                           input_choices = c("human", "mouse"),
                           input_default = "human")
-  # currently universe is calculated using the full set of genes
-  if (missing(ontology)) {
+  if (missing(ontologies)) {
     ontologies <- c("BP", "CC", "MF")
   } else {
-    if (!all(ontology %in% c("BP", "CC", "MF"))) {
+    if (!all(ontologies %in% c("BP", "CC", "MF"))) {
       stop(
         stringr::str_wrap(
-          paste0("Please provide valid values for the ontology parameter.
-                 Possible valid values: CC, BP, MF. You provided: ",
-                 crayon::underline(ontology), ".")
+          crayon::red(
+            paste0("ERROR: Please provide valid values for the ontology ",
+                   "parameter. Possible valid values: CC, BP, MF. ",
+                   "You provided: ", crayon::underline(ontologies), ".")
+          )
         )
-        )
+      )
     } else {
-      ontologies <- ontology
+      ontologies <- ontologies
     }
   }
   iterated_df <- iterators::isplit(dat, as.factor(dat$set_label))
   # to prevent complaining that that %dopar% is not found
   `%dopar%` <- foreach::`%dopar%`
-  res <- foreach::foreach(a = iterated_df, .combine = rbind,
+  res <- foreach::foreach(a = iterated_df,
+                          .combine = rbind,
                           .verbose = TRUE) %dopar% {
-                            get_all_ontologies(a$value$entrez,
-                                               species = species,
-                                               universe = universe,
-                                               ontologies = ontologies,
-                                               set_label = a$key[[1]])
-                            }
+                            tryCatch({
+                              get_all_ontologies(a$value$entrez,
+                                                 species = species,
+                                                 universe = universe,
+                                                 ontologies = ontologies,
+                                                 set_label = a$key[[1]])},
+                              warning = function(w){
+                                return_error_result(w,
+                                                    a$value$entrez,
+                                                    a$key[[1]])
+                              },
+                              error = function(e){
+                                return_error_result(e,
+                                                    a$value$entrez,
+                                                    a$key[[1]])
+                              }
+                            )
+                          }
+  # if any jobs created errors or warnings, remove these sets from the output
+  res <- remove_errors(res)
   return(res)
-  }
+}
 
 

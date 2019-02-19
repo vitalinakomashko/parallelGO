@@ -2,26 +2,41 @@
 % Please edit documentation in R/get_ontologies.R
 \name{get_ontology}
 \alias{get_ontology}
-\title{Run analysis for a specified ontology}
+\title{Run GO enrichment analysis for a specified ontology.}
 \usage{
 get_ontology(gene_id, universe, annotation, ontology, set_label)
 }
 \arguments{
-\item{gene_id}{set of unique Entrez Gene identifiers for which GO annotations
-need to be calculated}
+\item{gene_id}{Character vector of unique ENTREZ gene identifiers of
+interest.}
 
-\item{universe}{set of unique Entrez Gene identifiers}
+\item{universe}{Character vector of unique ENTREZ gene identifiers to be used
+as a universe.}
 
-\item{annotation}{a string indicating annotation data package name
-shouldn't be exported or maybe it should?}
+\item{annotation}{Character string with the name of the annotation data
+package.}
 
-\item{ontology}{a character string specifying the ontology, must be either "BP",
-"CC" or "MF"}
+\item{ontology}{Character string specifying the ontology, must be either
+"BP", "CC" or "MF".}
 
-\item{set_label}{a string to add as a column to the final result. Might
-be used as identification of the results in case there are many generated
-using this function}
+\item{set_label}{Character string used to populate the column
+\strong{set_label}. This parameter is optional. It is used for
+identification of results when \code{get_ontology} is used in a loop.}
+}
+\value{
+Data frame with the following columns: \strong{goid},
+\strong{pvalue}, \strong{odds_ratio}, \strong{exp_count}, \strong{count},
+\strong{size}, \strong{term}, \strong{p_bonferroni}, \strong{ontology},
+\strong{set_label} (if provided).
 }
 \description{
-Run analysis for a specified ontology
+\code{get_ontology} uses \code{\link[GOstats]{hyperGTest}} to calculate
+hypergeometric statistics (for over-represenation of each GO term);
+\code{\link[GOstats]{summary}} to return the summarized results with adjusted
+p values using \code{\link[stats]{p.adjust}} function and method
+"bonferroni".
+}
+\seealso{
+\code{\link[GOstats]{hyperGTest}},
+\code{\link[GOstats]{summary,GOHyperGResult-method}}.
 }

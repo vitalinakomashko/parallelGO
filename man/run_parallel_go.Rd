@@ -2,29 +2,44 @@
 % Please edit documentation in R/get_ontologies.R
 \name{run_parallel_go}
 \alias{run_parallel_go}
-\title{Run GO analysis on parallel}
+\title{Run GO analysis on parallel.}
 \usage{
-run_parallel_go(dat, species = c("human", "mouse"), universe, ontology,
+run_parallel_go(dat, species = c("human", "mouse"), universe, ontologies,
   cores)
 }
 \arguments{
-\item{dat}{data frame with two columns: entrez and set_label. The column
-"entrez" should contain Entrez gene identifiers; the column "set_label"
-should contain labels for genes that will be analyzed as a group.}
+\item{dat}{Data frame with two columns: \strong{entrez} and
+\strong{set_label}. The column \strong{entrez} should contain ENTREZ gene
+identifiers; the column \strong{set_label} should contain labels for
+identifiers that will be analyzed as a group.}
 
-\item{species}{a character string specifying the species, must be one of two "human"
-(default) or "mouse". For GO analysis we use 'org.Hs.eg.db' for
-human and 'org.Mm.eg.db' for mouse}
+\item{species}{Character string specifying the species, must be one of two
+"human" (default) or "mouse". For GO analysis we use
+\href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db}, and for mouse \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db}.}
 
-\item{ontology}{vector of ontologies for which to run the analysis. If not provided
-then the analysis will be run for all ontologies: cellular component (CC),
-biological process (BP) and molecular function (MF).}
+\item{universe}{Character vector of unique ENTREZ gene identifiers to be used
+as a universe.}
 
-\item{cores}{numeric value representing the number of cores to use.}
+\item{ontologies}{Character vector of ontologies for which to run the
+analysis. If not provided the analysis will be run for all ontologies:
+cellular component (CC), biological process (BP) and molecular function
+(MF).}
+
+\item{cores}{Integer value representing the number of cores to use. This
+parameter is optional. If not provided
+\code{\link[foreach]{getDoParWorkers}} function will be called to determine
+the number of workers.}
+}
+\value{
+Data frame with the results of GO enrichment.
 }
 \description{
-This is a parallel implementation of the function to run GO analysis. The
-function will split the supplied data into pieces based on the unique values
-in the column "set_label" in the data and will send them to the "cores" for
-calculations.
+\code{run_parallel_go} splits provided data frame into a list of data frames
+based on the values in the column \strong{set_label} and
+using \code{\link[iterators]{isplit}} function. It then runs
+\code{get_all_ontologies} in parallel using \pkg{foreach} by sending each
+data frame onto a worker.
+}
+\seealso{
+\code{get_ontology} to understand the output format.
 }
