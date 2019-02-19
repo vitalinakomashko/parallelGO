@@ -192,7 +192,7 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
     }
   }
   iterated_df <- iterators::isplit(dat, as.factor(dat$set_label))
-  # to prevent complaining that that %dopar% is not found
+  # to prevent complaining that %dopar% is not found
   `%dopar%` <- foreach::`%dopar%`
   res <- foreach::foreach(a = iterated_df,
                           .combine = rbind,
