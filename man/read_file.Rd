@@ -7,20 +7,21 @@
 read_file(path, col_names, delim)
 }
 \arguments{
-\item{path}{The name of the fle which the data are to be read from.}
+\item{path}{Character string with the file path.}
 
-\item{col_names}{A logical value indicating whether the file contains the names
-of the variables as its first line.}
+\item{col_names}{A logical value indicating whether the file contains column
+names in the first line.}
 
-\item{delim}{The file field separator character.}
+\item{delim}{Character string indicating the field separator character.}
 }
 \value{
-A data frame with two columns, where the first column is 'id' (gene
-identifiers) and the second column is 'set.label' (gene set labels).
+Data frame with two columns, where the first column is \strong{id}
+(gene identifiers) and the second column is \strong{set_label}
+(gene set labels).
 }
 \description{
-\code{read_file} reads a file provided a path, column names and file field
-delimiter and returns a data frame. For the file to be processed correctly
-ensure that the gene identifiers are in the first columns and the set labels
-are in the second column in the file.
+\code{read_file} reads a file given a path, column names and a field
+delimiter. For the file to be processed correctly ensure that the gene
+identifiers are in the first columns and the set labels are in the second
+column in the file.
 }

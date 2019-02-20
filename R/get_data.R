@@ -1,18 +1,23 @@
 # --------- read_data ----------
-
 #' Read data with genes and gene set labels to a data frame
 #'
-#' `read_file` reads a file provided a path, column names and file field
-#' delimiter and returns a data frame. For the file to be processed correctly
-#' ensure that the gene identifiers are in the first columns and the set labels
-#' are in the second column in the file.
+#' \code{read_file} reads a file given a path, column names and a field
+#' delimiter. For the file to be processed correctly ensure that the gene
+#' identifiers are in the first columns and the set labels are in the second
+#' column in the file.
 #'
-#' @param path The name of the fle which the data are to be read from.
-#' @param col_names A logical value indicating whether the file contains the names
-#'  of the variables as its first line.
-#' @param delim The file field separator character.
-#' @return A data frame with two columns, where the first column is 'id' (gene
-#'  identifiers) and the second column is 'set.label' (gene set labels).
+#' @param path Character string with the file path.
+#'
+#' @param col_names A logical value indicating whether the file contains column
+#'  names in the first line.
+#'
+#' @param delim Character string indicating the field separator character.
+#'
+#' @return Data frame with two columns, where the first column is \strong{id}
+#' (gene identifiers) and the second column is \strong{set_label}
+#' (gene set labels).
+#'
+#' @export
 
 
 read_file <- function(path, col_names, delim){
@@ -24,9 +29,9 @@ read_file <- function(path, col_names, delim){
     } else {
       message(
         crayon::yellow("ATTENTION: For the file to be processed correctly,",
-                         "ensure that the gene identifiers are in the first",
-                         "column and the gene set labels are in the second column.")
-        )
+                       "ensure that the gene identifiers are in the first",
+                       "column and the gene set labels are in the second column.")
+      )
       if (missing(col_names)) {
         stop("Please provide TRUE (present) or FALSE (absent) for the
              'col_names' parameter.")
@@ -53,13 +58,25 @@ read_file <- function(path, col_names, delim){
       if (ncol(dat) > 2) {
         message(
           stringr::str_wrap(
-            crayon::yellow("ATTENTION: found more than two columns in the file,
+            crayon::yellow("ATTENTION: Found more than two columns in the file,
                            retaining only the first two.")))
         dat <- dat[, 1:2]
+      } else if (ncol(dat) < 2) {
+        stop(
+          stringr::str_wrap(
+            crayon::red(
+              paste0("ERROR: Need two columns for data processing, received ",
+                     crayon::underline(ncol(dat)), ". Please provide a file ",
+                     "with two columns. First column should contain contain ",
+                     "gene identifiers, second column should contain set ","
+                     labels.")
+            )
+          )
+        )
       }
       colnames(dat) <- c("id", "set_label")
       return(dat)
     }
-      }
   }
+}
 
