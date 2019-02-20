@@ -10,7 +10,7 @@ package functionality.
 }
 \usage{data("human_symbol")}
 \format{
-  A data frame with 260 observations on the following 2 variables.
+  A data frame with 280 observations on the following 2 variables.
   \describe{
     \item{\code{id}}{gene symbols}
     \item{\code{set_label}}{gene set labels}
