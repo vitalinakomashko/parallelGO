@@ -19,6 +19,17 @@
 #' @return Data frame with two columns: \strong{entrez} and \strong{set_label}.
 #' The column with the original identifiers is removed.
 #'
+#' @examples
+#'
+#' \dontrun{
+#' # load test data:
+#' data("human_symbol")
+#' # remove duplicate rows:
+#' dat_clean <- deduplicate_rows(human_symbol)
+#' # map symbol to ENTREZ gene id:
+#' dat_mapped <- map_genes(dat_clean, id = "symbol", species = "human")
+#' }
+#'
 #' @export
 
 map_genes <- function(dat, id = "symbol", species = "human"){

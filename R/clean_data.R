@@ -9,6 +9,12 @@
 #'
 #' @return Data frame.
 #'
+#' @examples
+#' \dontrun{
+#' data("human_symbol")
+#' temp <- deduplicate_rows(human_symbol)
+#' }
+#'
 #' @export
 
 
@@ -53,6 +59,12 @@ deduplicate_rows <- function(dat){
 #'
 #' @return Data frame object.
 #'
+#' @examples
+#' \dontrun{
+#' data("human_symbol")
+#' temp <- remove_small_sets(human_symbol, min_set_size = 30)
+#' }
+#'
 #' @export
 
 remove_small_sets <- function(dat, min_set_size){
@@ -87,7 +99,7 @@ remove_small_sets <- function(dat, min_set_size){
       low_count_set_total <- low_count_set_list %>%
         dplyr::summarize(total = n())
       message(
-        stringr::wrap(
+        stringr::str_wrap(
           crayon::green(
             paste0("You provided ", crayon::underline(min_set_size),
                    " genes as 'min_set_size'. Found ",
