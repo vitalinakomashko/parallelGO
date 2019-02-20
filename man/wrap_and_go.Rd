@@ -2,29 +2,63 @@
 % Please edit documentation in R/wrap_and_go.R
 \name{wrap_and_go}
 \alias{wrap_and_go}
-\title{Main function for running GO analysis}
+\title{Main function for running GO analysis in parallel.}
 \usage{
-wrap_and_go(path, col_names, delim, min_set_size, species, id, cores)
+wrap_and_go(path, col_names, delim, id, species, min_set_size, cores)
 }
 \arguments{
-\item{path}{The name of the fle which the data are to be read from}
+\item{path}{Character string specifying the path to file. This parameter is
+mandatory. For the file to be processed correctly ensure that gene
+identifiers are in the first column and the gene set labels are in the
+second column of the file.}
 
-\item{col_names}{a logical value indicating whether the file contains the names
-of the variables as its first line}
+\item{col_names}{A logical value indicating presence of column names in the
+first line of the file. This parameter is mandatory.}
 
-\item{delim}{The file field separator character.}
-
-\item{min_set_size}{Positive integer. If provided will be used to remove
-all gene sets where then number of genes is fewer than \code{min.set.size}.}
-
-\item{species}{A character string specifying the species, must be one of two
-"human" (default) or "mouse". For mapping to Entrez Gene identifiers we use
-'org.Hs.eg.db' (human) and 'org.Mm.eg.db' (mouse) Bioconductor annotation
-packages.}
+\item{delim}{Character string indicating field separator character in the
+file. This parameter is mandatory.}
 
 \item{id}{A character string specifying the type of gene identifier in the
-data, must of be one of two "hugo" (default) or "ensembl".}
+data, must of be one of two "symbol" (default) or "ensembl". This parameter
+is mandatory.}
+
+\item{species}{A character string specifying the species, must be one of two
+"human" (default) or "mouse". This parameter is mandatory.}
+
+\item{min_set_size}{Positive integer that defines a minimum number of genes
+in a set. This parameter is optional. If provided all sets that don't meet
+the membership criteria will be removed before GO enrichment analysis.}
+
+\item{cores}{Positive integer specifying number of cores to be used for
+parallel computation. This parameter is optional.}
+}
+\value{
+Data frame with the results of GO enrichment analysis.
 }
 \description{
-Main function for running GO analysis
+\code{wrap_and_go} serves as a wrapper function for reading the file with
+gene identifiers and set labels, applying minor cleaning, mapping to ENTREZ
+gene identifiers and calculating GO enrichment analysis in parallel.
+}
+\examples{
+\dontrun{
+## Example 1: provide all possible parameters
+
+wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", id = "symbol",
+species = "human", min_set_size = 30, cores = 4)
+
+## Example 2: provide minimum necessary set of parameters (no sets will be
+removed, number of cores will be determined by foreach::getDoParWorkers)
+
+wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", id = "symbol",
+species = "human")
+
+## Example 3: with ensembl gene ids instead of gene symbols (versions will be
+stripped off from ensembl ids if persent):
+
+wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", id = "ensembl",
+species = "human")
+
+}
+
 }

@@ -6,7 +6,7 @@
 #' identifiers are in the first columns and the set labels are in the second
 #' column in the file.
 #'
-#' @param path Character string with the file path.
+#' @param path Character string specifying the path to file.
 #'
 #' @param col_names A logical value indicating whether the file contains column
 #'  names in the first line.

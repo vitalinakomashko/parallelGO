@@ -7,7 +7,7 @@
 read_file(path, col_names, delim)
 }
 \arguments{
-\item{path}{Character string with the file path.}
+\item{path}{Character string specifying the path to file.}
 
 \item{col_names}{A logical value indicating whether the file contains column
 names in the first line.}
