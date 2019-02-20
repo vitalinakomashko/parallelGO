@@ -22,16 +22,28 @@ verify_input <- function(input_name, input_choices, input_default){
         return(input_name)
       } else {
         stop(
-          paste0("Unexpected value for ", input_name,
-                 " was provided; please provide one of ",
-                 paste0(input_choices, collapse = " or "), ".")
+          stringr::str_wrap(
+            crayon::red(
+              paste0("Unexpected value for ", crayon::underline(input_name),
+                     " was provided; please provide one of ",
+                     crayon::underline(paste0(input_choices,
+                                              collapse = " or ")),
+                     ".")
+            )
+          )
         )
       }
     } else {
       stop(
-        paste0("More than one value for ", input_name,
-               " parameter was provided; please provide either ",
-               paste0(input_choices, collapse = " or "), "."))
+        stringr::str_wrap(
+          crayon::red(
+            paste0("More than one value for ", crayon::underline(input_name),
+                   " parameter was provided; please provide either ",
+                   crayon::underline(paste0(input_choices, collapse = " or ")),
+                   ".")
+          )
+        )
+      )
     }
   } else {
     message(
@@ -91,9 +103,15 @@ remove_errors <- function(dat){
   if("error_warning" %in% dat$ontology) {
     k <- which(dat$ontology == "error_warning")
     message(
-      paste0("GO enrichment generated errors or warnings for the following ",
-             "sets: ", paste0(as.character(dat$set_label[k]), collapse = ", "),
-            ". For these sets no results will be provided in the output.")
+      stringr::str_wrap(
+        crayon::yellow(
+          paste0("GO enrichment generated errors or warnings for the following ",
+                 "sets: ",
+                 crayon::underline(paste0(as.character(dat$set_label[k]),
+                                          collapse = ", ")),
+                 ". These sets are excluded from the output.")
+        )
+      )
     )
     dat <- dat[-k, ]
   }
