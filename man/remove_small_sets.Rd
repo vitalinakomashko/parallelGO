@@ -2,22 +2,21 @@
 % Please edit documentation in R/clean_data.R
 \name{remove_small_sets}
 \alias{remove_small_sets}
-\title{Remove sets that have smaller number of members than provided threshold}
+\title{Remove gene sets where membership is smaller than a cutoff}
 \usage{
 remove_small_sets(dat, min_set_size)
 }
 \arguments{
-\item{dat}{Data frame object with two columns: Entrez gene idenitifiers
-(\code{id}) and set labels (\code{set_label}), output of the function
-\code{\link{map_genes}} call.}
+\item{dat}{Data frame object with two columns: ENTREZ gene idenitifiers
+\code{entrez} and set labels \code{set_label}.}
 
-\item{min_set_size}{Positive integer. If provided will be used to remove
-all gene sets where then number of genes is fewer than \code{min_set_size}.}
+\item{min_set_size}{Positive integer that defines the minimum number of genes
+in a set. All sets that don't meet this criteria will be removed.}
 }
 \value{
 Data frame object.
 }
 \description{
 \code{remove_small_sets} function removes sets that have fewer genes
-than \code{min_set_size}.
+identifiers than \code{min_set_size}.
 }
