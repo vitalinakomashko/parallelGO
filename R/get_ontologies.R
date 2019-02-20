@@ -142,6 +142,20 @@ get_all_ontologies <- function(gene_id, universe, species = c("human", "mouse"),
 #'
 #' @seealso \code{get_ontology} to understand the output format.
 #'
+#' @examples
+#' \dontrun{
+#' # load test data:
+#' data("human_symbol")
+#' remove duplicate rows:
+#' dat_clean <- deduplicate_rows(human_symbol)
+#' # map symbol to ENTREZ gene id:
+#' dat_mapped <- map_genes(dat_clean, id = "symbol", species = "human")
+#' # extract universe
+#' universe <- unique(dat_mapped$entrez)
+#' # run GO enrichment in parallel
+#' res <- run_parallel_go(dat_mapped, species = "human", universe = universe)
+#' }
+#'
 #' @export
 
 
@@ -164,9 +178,9 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
     message(
       stringr::str_wrap(
         crayon::green(
-          paste0("Parameter 'cores' is not provided. Getting the number of
-               available cores vis foreach::getDoParWorkers(). Will run GO
-               computation on ", workers, " cores.")
+          paste0("Parameter 'cores' is not provided. Getting the number of ",
+                 "available cores with foreach::getDoParWorkers(). GO enrichment ",
+                 "will be run on ", crayon::underline(workers), " cores.")
         )
       )
     )
@@ -195,8 +209,7 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
   # to prevent complaining that %dopar% is not found
   `%dopar%` <- foreach::`%dopar%`
   res <- foreach::foreach(a = iterated_df,
-                          .combine = rbind,
-                          .verbose = TRUE) %dopar% {
+                          .combine = rbind) %dopar% {
                             tryCatch({
                               get_all_ontologies(a$value$entrez,
                                                  species = species,
