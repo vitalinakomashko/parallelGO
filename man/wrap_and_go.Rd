@@ -42,22 +42,22 @@ gene identifiers and calculating GO enrichment analysis in parallel.
 }
 \examples{
 \dontrun{
-## Example 1: provide all possible parameters
+# Example 1: provide all possible parameters
 
-wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", id = "symbol",
-species = "human", min_set_size = 30, cores = 4)
+ out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
+ id = "symbol", species = "human", min_set_size = 30, cores = 4)
 
-## Example 2: provide minimum necessary set of parameters (no sets will be
+# Example 2: provide minimum necessary set of parameters (no sets will be
 removed, number of cores will be determined by foreach::getDoParWorkers)
 
-wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", id = "symbol",
-species = "human")
+out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
+id = "symbol", species = "human")
 
-## Example 3: with ensembl gene ids instead of gene symbols (versions will be
+# Example 3: with ensembl gene ids instead of gene symbols (versions will be
 stripped off from ensembl ids if persent):
 
-wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", id = "ensembl",
-species = "human")
+out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
+id = "ensembl", species = "human")
 
 }
 

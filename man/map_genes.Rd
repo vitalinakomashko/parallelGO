@@ -28,3 +28,15 @@ between the common gene symbol idenditifers and org.Xx.eg.db::org.Xx.egENSEMBL f
 the mappings between ENTREZ Gene identifiers and Exnsembl gene
 accession numbers.
 }
+\examples{
+
+\dontrun{
+# load test data:
+data("human_symbol")
+# remove duplicate rows:
+dat_clean <- deduplicate_rows(human_symbol)
+# map symbol to ENTREZ gene id:
+dat_mapped <- map_genes(dat_clean, id = "symbol", species = "human")
+}
+
+}

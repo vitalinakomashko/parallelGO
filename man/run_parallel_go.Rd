@@ -40,6 +40,21 @@ using \code{\link[iterators]{isplit}} function. It then runs
 \code{get_all_ontologies} in parallel using \pkg{foreach} by sending each
 data frame onto a worker.
 }
+\examples{
+\dontrun{
+# load test data:
+data("human_symbol")
+remove duplicate rows:
+dat_clean <- deduplicate_rows(human_symbol)
+# map symbol to ENTREZ gene id:
+dat_mapped <- map_genes(dat_clean, id = "symbol", species = "human")
+# extract universe
+universe <- unique(dat_mapped$entrez)
+# run GO enrichment in parallel
+res <- run_parallel_go(dat_mapped, species = "human", universe = universe)
+}
+
+}
 \seealso{
 \code{get_ontology} to understand the output format.
 }

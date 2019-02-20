@@ -20,3 +20,10 @@ Data frame object.
 \code{remove_small_sets} function removes sets that have fewer genes
 identifiers than \code{min_set_size}.
 }
+\examples{
+\dontrun{
+data("human_symbol")
+temp <- remove_small_sets(human_symbol, min_set_size = 30)
+}
+
+}

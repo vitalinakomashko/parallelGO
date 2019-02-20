@@ -17,3 +17,10 @@ Data frame.
 \code{deduplicate_rows} function removes duplicated rows prior to mapping
 to ENTREZ gene identifiers.
 }
+\examples{
+\dontrun{
+data("human_symbol")
+temp <- deduplicate_rows(human_symbol)
+}
+
+}
