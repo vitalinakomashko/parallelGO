@@ -28,8 +28,21 @@ You can install the released version of parallelGO from
 [github](https://github.com) with:
 
 ``` r
+install.packages("remotes")
 remotes::install_github("vitalinakomashko/parallelGO")
 ```
+
+This package requires two Bioconductor packages: [AnnotationDbi](https://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html) and [GOstats](https://bioconductor.org/packages/release/bioc/html/GOstats.html).
+If you don't have these packages installed you can either install them by
+following instructions on the pages for these packages or, prior to installation
+of parallelGO from github, run this line in R:
+
+``` r
+setRepositories(ind = 1:3)
+```
+
+This will set the repositories to CRAN, BioC software and BioC annotation. This
+idea was found [here](https://stackoverflow.com/a/20479243/1655368).
 
 ## How to use
 
@@ -37,6 +50,7 @@ If you have a file with human gene symbols where each symbol is assigned to a
 gene set you can run the analysis by invoking the following code:
 
 ``` r
+library(parallelGO)
 out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",", 
                    id = "symbol", species = "human")
 ```
