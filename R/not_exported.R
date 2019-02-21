@@ -115,4 +115,5 @@ remove_errors <- function(dat){
     )
     dat <- dat[-k, ]
   }
+  return(dat)
 }
