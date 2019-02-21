@@ -45,6 +45,12 @@ dat_large_sets <- remove_small_sets(dat_mapped, min_set_size = 30)
 res <- run_parallel_go(dat_large_sets, species = "human", universe = universe)
 ```
 
+In addition, we provide a function for filtering p-values (raw or adjusted) which can be called after either scenario described above:
+
+``` r
+res_filtered <- filter_pvalues(res, cutoff = 0.05)
+```
+
 Example dataset
 ---------------
 
