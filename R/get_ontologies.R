@@ -209,7 +209,8 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
   # to prevent complaining that %dopar% is not found
   `%dopar%` <- foreach::`%dopar%`
   res <- foreach::foreach(a = iterated_df,
-                          .combine = rbind) %dopar% {
+                          .combine = rbind,
+                          .packages = c("parallelGO", "GOstats")) %dopar% {
                             tryCatch({
                               get_all_ontologies(a$value$entrez,
                                                  species = species,
@@ -228,6 +229,7 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
                               }
                             )
                           }
+  doParallel::stopImplicitCluster()
   # if any jobs created errors or warnings, remove these sets from the output
   res <- remove_errors(res)
   return(res)
