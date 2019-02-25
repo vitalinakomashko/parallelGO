@@ -65,6 +65,13 @@ verify_input <- function(input_name, input_choices, input_default){
 #' message, and the column \strong{set_label} provides the label of the gene set
 #' for which a condition was encountered. This is an internal function.
 #'
+#' @param error_warning A condition object.
+#'
+#' @param input_genes Characater vector with the list of genes for which GO
+#'  enrichment is run.
+#'
+#' @param input_label Character string with a label for the list of genes.
+#'
 #' @seealso \code{\link{run_parallel_go}}, \code{\link{remove_errors}},
 #'  \code{\link{get_ontology}}.
 #'
