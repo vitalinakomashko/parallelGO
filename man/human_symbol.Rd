@@ -2,11 +2,11 @@
 \alias{human_symbol}
 \docType{data}
 \title{
-Small test dataset with human gene symbols created for demonstrating
-package functionality.
+ List of human gene symbols grouped by set label.
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of the dataset. ~~
+Small test dataset with human gene symbols created for demonstrating
+package functionality.
 }
 \usage{data("human_symbol")}
 \format{
@@ -18,9 +18,6 @@ package functionality.
 }
 \source{
 internal
-}
-\references{
-%%  ~~ possibly secondary sources and usages ~~
 }
 \examples{
 data(human_symbol)
