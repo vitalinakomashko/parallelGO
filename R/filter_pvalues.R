@@ -18,6 +18,8 @@
 #' @return Data frame.
 #'
 #' @seealso \code{get_ontology}.
+#'
+#' @export
 
 filter_pvalues <- function(dat, which_pvalue = "adjusted", cutoff){
   if (missing(cutoff)) {
