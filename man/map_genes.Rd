@@ -20,13 +20,13 @@ Data frame with two columns: \strong{entrez} and \strong{set_label}.
 The column with the original identifiers is removed.
 }
 \description{
-\code{map_genes} provides mapping to ENTREZ gene identifiers for Hugo or Ensembl
-gene identifiers using either \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db} or \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} Bioconductor annotation
-packages. Function \code{\link[AnnotationDb]{toTable}} is used to
+\code{map_genes} provides mapping to ENTREZ gene identifiers for Hugo or
+Ensembl gene identifiers using either \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db} or \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} Bioconductor annotation
+packages. Function \code{\link[annotate]{lookUp}} is used to
 extract the mappings. We use org.Xx.eg.db::org.Xx.egALIAS2EG for the mappings
-between the common gene symbol idenditifers and org.Xx.eg.db::org.Xx.egENSEMBL for
-the mappings between ENTREZ Gene identifiers and Exnsembl gene
-accession numbers.
+between the common gene symbol idenditifers and
+org.Xx.eg.db::org.Xx.egENSEMBL for the mappings between ENTREZ gene
+identifiers and Ensembl gene accession numbers.
 }
 \examples{
 
