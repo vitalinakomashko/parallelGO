@@ -19,12 +19,13 @@ Depends:
 Imports: 
     magrittr,
     dplyr,
-    AnnotationDbi,
     stringr,
     crayon,
     doParallel,
     iterators,
     GOstats,
-    foreach
+    foreach,
+    methods,
+    annotate
 Suggests: 
     testthat
