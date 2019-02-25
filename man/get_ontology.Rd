@@ -32,11 +32,11 @@ Data frame with the following columns: \strong{goid},
 \description{
 \code{get_ontology} uses \code{\link[GOstats]{hyperGTest}} to calculate
 hypergeometric statistics (for over-represenation of each GO term);
-\code{\link[GOstats]{summary}} to return the summarized results with adjusted
+\code{\link[=GOHyperGResult-class]{GOstats::summary}} to return the summarized results with adjusted
 p values using \code{\link[stats]{p.adjust}} function and method
 "bonferroni".
 }
 \seealso{
 \code{\link[GOstats]{hyperGTest}},
-\code{\link[GOstats]{summary,GOHyperGResult-method}}.
+\code{\link[=GOHyperGResult-class]{GOstats::summary}}.
 }
