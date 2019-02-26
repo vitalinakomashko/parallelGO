@@ -97,13 +97,18 @@ get_all_ontologies <- function(gene_id, universe, species = c("human", "mouse"),
   } else {
     annotation <- "org.Mm.eg.db"
   }
-  res_list <- base::lapply(ontologies, function(x) get_ontology(gene_id = gene_id,
-                                                        universe = universe,
-                                                        annotation = annotation,
-                                                        ontology = x,
-                                                        set_label = set_label))
-  res.df <- base::do.call("rbind", res_list)
-  return(res.df)
+  # to prevent complaining that %dopar% is not found
+  `%dopar%` <- foreach::`%dopar%`
+  res <- foreach::foreach(a = ontologies,
+                          .combine = rbind,
+                          .packages = c("parallelGO", "GOstats")) %dopar% {
+                            get_ontology(gene_id = gene_id,
+                                         universe = universe,
+                                         annotation = annotation,
+                                         ontology = a,
+                                         set_label = set_label)
+                          }
+  return(res)
 }
 
 
