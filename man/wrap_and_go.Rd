@@ -4,7 +4,8 @@
 \alias{wrap_and_go}
 \title{Main function for running GO analysis in parallel.}
 \usage{
-wrap_and_go(path, col_names, delim, id, species, min_set_size, cores)
+wrap_and_go(path, col_names, delim, id, species, min_set_size, cores,
+  run_parallel = TRUE)
 }
 \arguments{
 \item{path}{Character string specifying the path to file. This parameter is
@@ -31,6 +32,9 @@ the membership criteria will be removed before GO enrichment analysis.}
 
 \item{cores}{Positive integer specifying number of cores to be used for
 parallel computation. This parameter is optional.}
+
+\item{run_parallel}{Boolean indicating whether to run the execution in
+parallel. Default is TRUE. If FALSE parameter \code{cores} will be ignored.}
 }
 \value{
 Data frame with the results of GO enrichment analysis.

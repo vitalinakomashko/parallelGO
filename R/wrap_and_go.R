@@ -29,6 +29,9 @@
 #' @param cores Positive integer specifying number of cores to be used for
 #'  parallel computation. This parameter is optional.
 #'
+#' @param run_parallel Boolean indicating whether to run the execution in
+#'  parallel. Default is TRUE. If FALSE parameter \code{cores} will be ignored.
+#'
 #' @return Data frame with the results of GO enrichment analysis.
 #'
 #' @examples
@@ -58,7 +61,7 @@
 
 
 wrap_and_go <- function(path, col_names, delim, id, species,
-                        min_set_size, cores){
+                        min_set_size, cores, run_parallel = TRUE){
   # read file
   dat <- read_file(path = path, col_names = col_names, delim = delim)
   # remove duplicate rows
@@ -70,7 +73,7 @@ wrap_and_go <- function(path, col_names, delim, id, species,
   # remove sets with a small number of genes
   dat_large_sets <- remove_small_sets(dat_mapped, min_set_size)
   # run GO analysis in parallel
-  res <- run_parallel_go(dat_large_sets, species = species, universe = universe,
-                         cores = cores)
+  res <- run_go(dat_large_sets, species = species, universe = universe,
+                         cores = cores, run_parallel = run_parallel)
   return(res)
 }
