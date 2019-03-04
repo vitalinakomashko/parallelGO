@@ -81,3 +81,37 @@ str(human_symbol)
 #>  $ id       : chr  "STPG1" "CACNA1G" "MAP3K9" "MDH1" ...
 #>  $ set_label: int  24 23 24 156 159 24 158 157 158 156 ...
 ```
+
+Benchmarking using the example dataset
+--------------------------------------
+
+We benchmarked performance using the code above and the sample dataset.
+
+macOS: MacBook Pro 2.7 GHz Intel Core i7, 16 Gb 2133 MHz LPDDR3.
+
+Serial execution:
+
+``` r
+system.time(res <- run_parallel_go(dat_large_sets, 
+                                   species = "human", 
+                                   universe = universe, 
+                                   run_parallel = FALSE))
+```
+
+    Parameter run_parallel is FALSE. Computation will be run sequentially.
+       user  system elapsed 
+    236.094  46.896 284.544
+
+Parallel execution using 4 cores:
+
+``` r
+system.time(res <- run_parallel_go(dat_large_sets, 
+                                   species = "human", 
+                                   universe = universe))
+```
+
+    Parameter 'cores' is not provided. Getting the number of available cores
+    with foreach::getDoParWorkers(). GO enrichment will be run in parallel on
+    4 cores using doParallelMC backend.
+       user  system elapsed 
+    243.602  55.488 108.968
