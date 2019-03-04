@@ -171,8 +171,7 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
   `%dopar%` <- foreach::`%dopar%`
   res <- foreach::foreach(a = iterated_df,
                           .combine = rbind,
-                          .packages = c("parallelGO", "GOstats"),
-                          .verbose = TRUE) %:%
+                          .packages = c("parallelGO", "GOstats")) %:%
     foreach::foreach(ont = ontologies, .combine = rbind) %dopar% {
       tryCatch({
         get_ontology(gene_id = a$value$entrez,
@@ -198,5 +197,4 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
   res <- remove_errors(res)
   return(res)
 }
-
 
