@@ -7,7 +7,7 @@
 remove_small_sets(dat, min_set_size)
 }
 \arguments{
-\item{dat}{Data frame object with two columns: ENTREZ gene idenitifiers
+\item{dat}{Data frame object with two columns: ENTREZ gene identifiers
 \code{entrez} and set labels \code{set_label}.}
 
 \item{min_set_size}{Positive integer that defines the minimum number of genes

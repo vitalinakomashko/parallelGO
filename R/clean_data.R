@@ -51,7 +51,7 @@ deduplicate_rows <- function(dat){
 #' \code{remove_small_sets} function removes sets that have fewer genes
 #' identifiers than \code{min_set_size}.
 #'
-#' @param dat Data frame object with two columns: ENTREZ gene idenitifiers
+#' @param dat Data frame object with two columns: ENTREZ gene identifiers
 #'  \code{entrez} and set labels \code{set_label}.
 #'
 #' @param min_set_size Positive integer that defines the minimum number of genes
