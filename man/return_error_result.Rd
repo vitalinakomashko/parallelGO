@@ -9,7 +9,7 @@ return_error_result(error_warning, input_genes, input_label)
 \arguments{
 \item{error_warning}{A condition object.}
 
-\item{input_genes}{Characater vector with the list of genes for which GO
+\item{input_genes}{Character vector with the list of genes for which GO
 enrichment is run.}
 
 \item{input_label}{Character string with a label for the list of genes.}

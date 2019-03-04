@@ -67,7 +67,7 @@ verify_input <- function(input_name, input_choices, input_default){
 #'
 #' @param error_warning A condition object.
 #'
-#' @param input_genes Characater vector with the list of genes for which GO
+#' @param input_genes Character vector with the list of genes for which GO
 #'  enrichment is run.
 #'
 #' @param input_label Character string with a label for the list of genes.
