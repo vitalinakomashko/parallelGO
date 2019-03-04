@@ -43,7 +43,7 @@ read_file <- function(path, col_names, delim){
       } else {
         delim <- delim
       }
-      dat <- read.delim(file = path, header = col_names, sep = delim,
+      dat <- utils::read.delim(file = path, header = col_names, sep = delim,
                         stringsAsFactors = FALSE,
                         colClasses = "character",
                         row.names = NULL)
