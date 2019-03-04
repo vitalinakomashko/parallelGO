@@ -3,7 +3,6 @@
 export("%>%")
 export(deduplicate_rows)
 export(filter_pvalues)
-export(get_all_ontologies)
 export(get_ontology)
 export(map_genes)
 export(read_file)
