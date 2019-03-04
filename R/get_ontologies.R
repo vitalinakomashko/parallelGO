@@ -3,10 +3,10 @@
 #' Run GO enrichment analysis for a specified ontology.
 #'
 #' \code{get_ontology} uses \code{\link[GOstats]{hyperGTest}} to calculate
-#' hypergeometric statistics (for over-represenation of each GO term);
-#' \code{\link[=GOHyperGResult-class]{GOstats::summary}} to return the summarized results with adjusted
-#' p values using \code{\link[stats]{p.adjust}} function and method
-#' "bonferroni".
+#' hypergeometric statistics (for over-representation of each GO term);
+#' \code{\link[=GOHyperGResult-class]{GOstats::summary}} to return the summarized
+#' results with adjusted p values using \code{\link[stats]{p.adjust}} function
+#' and the method "bonferroni".
 #'
 #' @param gene_id Character vector of unique ENTREZ gene identifiers of
 #'  interest.
@@ -37,13 +37,13 @@
 
 get_ontology <- function(gene_id, universe, annotation,
                          ontology, set_label){
-  params <- new("GOHyperGParams", geneIds = gene_id,
-                universeGeneIds = universe,
-                annotation = annotation,
-                ontology = ontology,
-                pvalueCutoff = 1,
-                conditional = FALSE,
-                testDirection = "over")
+  params <- methods::new("GOHyperGParams", geneIds = gene_id,
+                         universeGeneIds = universe,
+                         annotation = annotation,
+                         ontology = ontology,
+                         pvalueCutoff = 1,
+                         conditional = FALSE,
+                         testDirection = "over")
   hg_over_test <- GOstats::hyperGTest(params)
   hg_over_results <- GOstats::summary(hg_over_test)
   hg_over_results <- hg_over_results %>%
@@ -57,58 +57,6 @@ get_ontology <- function(gene_id, universe, annotation,
       dplyr::mutate(set_label = set_label)
   }
   return(hg_over_results)
-}
-
-# --------- get_all_ontologies ----------
-
-#' Perform GO enrichment analysis for a list of ontologies.
-#'
-#' \code{get_all_ontologies} loops through the list of ontologies and calls
-#' \code{get_ontology} for each.
-#'
-#' @param gene_id Character vector of unique ENTREZ gene identifiers of
-#'  interest.
-#'
-#' @param universe Character vector of unique ENTREZ gene identifiers to be used
-#'  as a universe.
-#'
-#' @param species Character string specifying the species, must be one of two
-#'  "human" (default) or "mouse". This will define which Bioconductor package
-#'  is used as a source of GO annotations. For human we use
-#'  \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db}, and for mouse \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db}.
-#'
-#' @param ontologies Character vector specifying ontologies of interest, such
-#'  as "MF", "BP" and "CC".
-#'
-#' @param set_label Character string specifying the label characterizing the
-#'  set of genes being analyzed. This parameter is optional.
-#'
-#' @return Data frame with the results of GO enrichment and an optional column
-#'  populated with the provided "set_label".
-#'
-#' @seealso \code{get_ontology} to understand the output format.
-#'
-#' @export
-
-get_all_ontologies <- function(gene_id, universe, species = c("human", "mouse"),
-                               ontologies, set_label){
-  if (species == "human") {
-    annotation <- "org.Hs.eg.db"
-  } else {
-    annotation <- "org.Mm.eg.db"
-  }
-  # to prevent complaining that %dopar% is not found
-  `%dopar%` <- foreach::`%dopar%`
-  res <- foreach::foreach(a = ontologies,
-                          .combine = rbind,
-                          .packages = c("parallelGO", "GOstats")) %dopar% {
-                            get_ontology(gene_id = gene_id,
-                                         universe = universe,
-                                         annotation = annotation,
-                                         ontology = a,
-                                         set_label = set_label)
-                          }
-  return(res)
 }
 
 
@@ -157,7 +105,7 @@ get_all_ontologies <- function(gene_id, universe, species = c("human", "mouse"),
 #' dat_mapped <- map_genes(dat_clean, id = "symbol", species = "human")
 #' # extract universe
 #' universe <- unique(dat_mapped$entrez)
-#' # run GO enrichment in parallel
+#' # run GO enrichment in parallel for all three ontologies
 #' res <- run_parallel_go(dat_mapped, species = "human", universe = universe)
 #' }
 #'
@@ -173,7 +121,8 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
     message(
       stringr::str_wrap(
         crayon::green(
-          paste0("Will run GO computation on ", workers, " cores.")
+          paste0("Will run GO computation on ", workers, " cores using ",
+                 foreach::getDoParName(), " backend.")
         )
       )
     )
@@ -184,8 +133,9 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
       stringr::str_wrap(
         crayon::green(
           paste0("Parameter 'cores' is not provided. Getting the number of ",
-                 "available cores with foreach::getDoParWorkers(). GO enrichment ",
-                 "will be run on ", crayon::underline(workers), " cores.")
+                 "available cores with foreach::getDoParWorkers(). ",
+                 "GO enrichment will be run on ", crayon::underline(workers),
+                 " cores using ", foreach::getDoParName(), " backend.")
         )
       )
     )
@@ -193,6 +143,11 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
   species <- verify_input(input_name = species,
                           input_choices = c("human", "mouse"),
                           input_default = "human")
+  if (species == "human") {
+    annotation <- "org.Hs.eg.db"
+  } else {
+    annotation <- "org.Mm.eg.db"
+  }
   if (missing(ontologies)) {
     ontologies <- c("BP", "CC", "MF")
   } else {
@@ -212,28 +167,32 @@ run_parallel_go <- function(dat, species = c("human", "mouse"),
   }
   iterated_df <- iterators::isplit(dat, as.factor(dat$set_label))
   # to prevent complaining that %dopar% is not found
+  `%:%` <- foreach::`%:%`
   `%dopar%` <- foreach::`%dopar%`
   res <- foreach::foreach(a = iterated_df,
                           .combine = rbind,
-                          .packages = c("parallelGO", "GOstats")) %dopar% {
-                            tryCatch({
-                              get_all_ontologies(a$value$entrez,
-                                                 species = species,
-                                                 universe = universe,
-                                                 ontologies = ontologies,
-                                                 set_label = a$key[[1]])},
-                              warning = function(w){
-                                return_error_result(w,
-                                                    a$value$entrez,
-                                                    a$key[[1]])
-                              },
-                              error = function(e){
-                                return_error_result(e,
-                                                    a$value$entrez,
-                                                    a$key[[1]])
-                              }
-                            )
-                          }
+                          .packages = c("parallelGO", "GOstats"),
+                          .verbose = TRUE) %:%
+    foreach::foreach(ont = ontologies, .combine = rbind) %dopar% {
+      tryCatch({
+        get_ontology(gene_id = a$value$entrez,
+                     universe = universe,
+                     annotation = annotation,
+                     ontology = ont,
+                     set_label = a$key[[1]])
+      },
+      warning = function(w){
+        return_error_result(w,
+                            input_genes = a$value$entrez,
+                            input_label = a$key[[1]])
+      },
+      error = function(e){
+        return_error_result(e,
+                            input_genes = a$value$entrez,
+                            input_label = a$key[[1]])
+      }
+      )
+    } # end internal foreach
   doParallel::stopImplicitCluster()
   # if any jobs created errors or warnings, remove these sets from the output
   res <- remove_errors(res)

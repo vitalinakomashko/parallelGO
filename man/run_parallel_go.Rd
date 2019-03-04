@@ -50,7 +50,7 @@ dat_clean <- deduplicate_rows(human_symbol)
 dat_mapped <- map_genes(dat_clean, id = "symbol", species = "human")
 # extract universe
 universe <- unique(dat_mapped$entrez)
-# run GO enrichment in parallel
+# run GO enrichment in parallel for all three ontologies
 res <- run_parallel_go(dat_mapped, species = "human", universe = universe)
 }
 
