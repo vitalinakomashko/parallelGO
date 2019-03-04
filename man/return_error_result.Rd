@@ -25,6 +25,6 @@ message, and the column \strong{set_label} provides the label of the gene set
 for which a condition was encountered. This is an internal function.
 }
 \seealso{
-\code{\link{run_parallel_go}}, \code{\link{remove_errors}},
+\code{\link{run_go}}, \code{\link{remove_errors}},
 \code{\link{get_ontology}}.
 }

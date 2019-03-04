@@ -24,5 +24,5 @@ missing and not valid the execution is stopped; if the \code{input_name} is miss
 the \code{input_default} is then returned. This is an internal function.
 }
 \seealso{
-\code{\link{map_genes}}, \code{\link{run_parallel_go}}.
+\code{\link{map_genes}}, \code{\link{run_go}}.
 }

@@ -18,5 +18,5 @@ which generated errors or warnings. Also provides a helpful message listing
 the labels of the removed sets. This is an internal function.
 }
 \seealso{
-\code{\link{run_parallel_go}}.
+\code{\link{run_go}}.
 }
