@@ -23,10 +23,8 @@ The column with the original identifiers is removed.
 \code{map_genes} provides mapping to ENTREZ gene identifiers for Hugo or
 Ensembl gene identifiers using either \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html}{org.Mm.eg.db} or \href{https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} Bioconductor annotation
 packages. Function \code{\link[annotate:getSYMBOL]{annotate::lookUp()}}
-extract the mappings. We use org.Xx.eg.db::org.Xx.egALIAS2EG for the mappings
-between the common gene symbol idenditifers and
-org.Xx.eg.db::org.Xx.egENSEMBL for the mappings between ENTREZ gene
-identifiers and Ensembl gene accession numbers.
+extract the mappings. We use \code{ALIAS2EG} for Hugo - ENTREZ
+mappings and \code{ENSEMBL} for Ensembl - ENTREZ gene mappings.
 }
 \examples{
 
