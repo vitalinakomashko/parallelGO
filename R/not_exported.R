@@ -11,7 +11,7 @@
 #' @param input_choices String containing the possible choices.
 #' @param input_default String containing the default parameter.
 #'
-#' @seealso \code{\link{map_genes}}, \code{\link{run_parallel_go}}.
+#' @seealso \code{\link{map_genes}}, \code{\link{run_go}}.
 #'
 #' @return String
 
@@ -72,7 +72,7 @@ verify_input <- function(input_name, input_choices, input_default){
 #'
 #' @param input_label Character string with a label for the list of genes.
 #'
-#' @seealso \code{\link{run_parallel_go}}, \code{\link{remove_errors}},
+#' @seealso \code{\link{run_go}}, \code{\link{remove_errors}},
 #'  \code{\link{get_ontology}}.
 #'
 #' @return Data frame with 1 row.
@@ -102,7 +102,7 @@ return_error_result <- function(error_warning, input_genes, input_label){
 #'
 #' @param dat Data frame, output of the parallelized run.
 #'
-#' @seealso \code{\link{run_parallel_go}}.
+#' @seealso \code{\link{run_go}}.
 #'
 #' @return Data frame.
 
