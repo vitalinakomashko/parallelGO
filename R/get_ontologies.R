@@ -147,6 +147,7 @@ run_go <- function(dat, species = c("human", "mouse"),
       )
     }
   } else {
+    foreach::registerDoSEQ()
     message(
       stringr::str_wrap(
         crayon::green(
