@@ -91,6 +91,9 @@ get_ontology <- function(gene_id, universe, annotation,
 #'  \code{\link[foreach]{getDoParWorkers}} function will be called to determine
 #'  the number of workers.
 #'
+#' @param run_parallel Boolean indicating whether to run the execution in
+#'  parallel. Default is TRUE. If FALSE parameter \code{cores} will be ignored.
+#'
 #' @return Data frame with the results of GO enrichment.
 #'
 #' @seealso \code{get_ontology} to understand the output format.
@@ -106,40 +109,54 @@ get_ontology <- function(gene_id, universe, annotation,
 #' # extract universe
 #' universe <- unique(dat_mapped$entrez)
 #' # run GO enrichment in parallel for all three ontologies
-#' res <- run_parallel_go(dat_mapped, species = "human", universe = universe)
+#' res <- run_go(dat_mapped, species = "human", universe = universe)
 #' }
 #'
 #' @export
 
 
-run_parallel_go <- function(dat, species = c("human", "mouse"),
+run_go <- function(dat, species = c("human", "mouse"),
                             universe,
-                            ontologies, cores){
-  if (!missing(cores)) {
-    doParallel::registerDoParallel(cores = cores)
-    workers <- foreach::getDoParWorkers()
-    message(
-      stringr::str_wrap(
-        crayon::green(
-          paste0("Will run GO computation on ", workers, " cores using ",
-                 foreach::getDoParName(), " backend.")
+                            ontologies, cores,
+                            run_parallel = TRUE){
+  if(run_parallel){
+    if (!missing(cores)) {
+      doParallel::registerDoParallel(cores = cores)
+      workers <- foreach::getDoParWorkers()
+      message(
+        stringr::str_wrap(
+          crayon::green(
+            paste0("Will run GO computation in parallel on ", workers,
+                   " cores using ", foreach::getDoParName(), " backend.")
+          )
         )
       )
-    )
+    } else {
+      doParallel::registerDoParallel()
+      workers <- foreach::getDoParWorkers()
+      message(
+        stringr::str_wrap(
+          crayon::green(
+            paste0("Parameter 'cores' is not provided. Getting the number of ",
+                   "available cores with foreach::getDoParWorkers(). ",
+                   "GO enrichment will be run in parallel on ",
+                   crayon::underline(workers), " cores using ",
+                   foreach::getDoParName(), " backend.")
+          )
+        )
+      )
+    }
   } else {
-    doParallel::registerDoParallel()
-    workers <- foreach::getDoParWorkers()
     message(
       stringr::str_wrap(
         crayon::green(
-          paste0("Parameter 'cores' is not provided. Getting the number of ",
-                 "available cores with foreach::getDoParWorkers(). ",
-                 "GO enrichment will be run on ", crayon::underline(workers),
-                 " cores using ", foreach::getDoParName(), " backend.")
+          paste0("Parameter run_parallel is FALSE. Computation will be run ",
+                 "sequentially.")
         )
       )
     )
   }
+
   species <- verify_input(input_name = species,
                           input_choices = c("human", "mouse"),
                           input_default = "human")
