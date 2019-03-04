@@ -52,7 +52,7 @@ universe <- unique(dat_mapped$entrez)
 # remove sets with a small number of genes, OPTIONAL:
 dat_large_sets <- remove_small_sets(dat_mapped, min_set_size = 30)
 # run GO analysis in parallel
-res <- run_parallel_go(dat_large_sets, species = "human", universe = universe)
+res <- run_go(dat_large_sets, species = "human", universe = universe)
 ```
 
 In addition, we provide a function for filtering p-values (raw or adjusted) which can be called after either scenario described above:
@@ -92,7 +92,7 @@ macOS: MacBook Pro 2.7 GHz Intel Core i7, 16 Gb 2133 MHz LPDDR3.
 Serial execution:
 
 ``` r
-system.time(res <- run_parallel_go(dat_large_sets, 
+system.time(res <- run_go(dat_large_sets, 
                                    species = "human", 
                                    universe = universe, 
                                    run_parallel = FALSE))
@@ -105,7 +105,7 @@ system.time(res <- run_parallel_go(dat_large_sets,
 Parallel execution using 4 cores:
 
 ``` r
-system.time(res <- run_parallel_go(dat_large_sets, 
+system.time(res <- run_go(dat_large_sets, 
                                    species = "human", 
                                    universe = universe))
 ```
