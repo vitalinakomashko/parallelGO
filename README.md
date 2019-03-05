@@ -15,7 +15,7 @@ install.packages("remotes")
 remotes::install_github("vitalinakomashko/parallelGO")
 ```
 
-This package requires two Bioconductor packages: [AnnotationDbi](https://bioconductor.org/packages/release/bioc/html/AnnotationDbi.html) and [GOstats](https://bioconductor.org/packages/release/bioc/html/GOstats.html). If you don't have these packages installed you can either install them by following instructions on the pages for these packages or, prior to installation of parallelGO from github, run this line in R:
+This package requires two Bioconductor packages: [annotate](https://www.bioconductor.org/packages/release/bioc/html/annotate.html) and [GOstats](https://bioconductor.org/packages/release/bioc/html/GOstats.html). If you don't have these packages installed you can either install them by following instructions on the pages for these packages or, prior to installation of parallelGO from github, run this line in R:
 
 ``` r
 setRepositories(ind = 1:3)
