@@ -87,7 +87,7 @@ Benchmarking using the example dataset
 
 We benchmarked performance using the code above and the sample dataset.
 
-macOS: MacBook Pro 2.7 GHz Intel Core i7, 16 Gb 2133 MHz LPDDR3.
+**macOS: MacBook Pro 2.7 GHz Intel Core i7, 16 Gb 2133 MHz LPDDR3.**
 
 Serial execution:
 
@@ -102,7 +102,7 @@ system.time(res <- run_go(dat_large_sets,
        user  system elapsed 
     236.094  46.896 284.544
 
-Parallel execution using 4 cores:
+Parallel execution:
 
 ``` r
 system.time(res <- run_go(dat_large_sets, 
@@ -115,3 +115,33 @@ system.time(res <- run_go(dat_large_sets,
     4 cores using doParallelMC backend.
        user  system elapsed 
     243.602  55.488 108.968
+
+**PC Windows 10 Pro, version 1809. Intel(R) Core(TM) i5-4300U CPU @ 1900 GHz 2.5 GHz, 8 Gb RAM**
+
+Serial execution:
+
+``` r
+system.time(res <- run_go(dat_large_sets, 
+                                   species = "human", 
+                                   universe = universe, 
+                                   run_parallel = FALSE))
+```
+
+    Parameter run_parallel is FALSE. Computation will be run sequentially.
+
+       user  system elapsed 
+     255.17  108.25  368.23
+
+Parallel execution:
+
+``` r
+system.time(res <- run_go(dat_large_sets, 
+                                   species = "human", 
+                                   universe = universe))
+```
+
+    Parameter 'cores' is not provided. Getting the number of available cores
+    with foreach::getDoParWorkers(). GO enrichment will be run in parallel on
+    3 cores using doParallelSNOW backend.
+       user  system elapsed 
+       0.14    0.03  247.44
