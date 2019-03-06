@@ -169,18 +169,33 @@ run_go <- function(dat, species = c("human", "mouse"),
   if (missing(ontologies)) {
     ontologies <- c("BP", "CC", "MF")
   } else {
-    if (!all(ontologies %in% c("BP", "CC", "MF"))) {
+    if (!any(ontologies %in% c("BP", "CC", "MF"))) {
       stop(
         stringr::str_wrap(
           crayon::red(
-            paste0("ERROR: Please provide valid values for the ontology ",
-                   "parameter. Possible valid values: CC, BP, MF. ",
-                   "You provided: ", crayon::underline(ontologies), ".")
+            paste0("ERROR: Please provide valid values for the parameter ",
+                   "'ontologies'. Possible valid values: CC, BP, MF. ",
+                   "You provided: ",
+                   crayon::underline(paste0(ontologies, collapse = ",")), ".")
           )
         )
       )
     } else {
-      ontologies <- ontologies
+      k <- ontologies %in% c("BP", "CC", "MF")
+      valid_ont <- ontologies[k]
+      message(
+        stringr::str_wrap(
+          crayon::yellow(
+            paste0("ATTENTION: You provided the following values for the ",
+                   "the parameter 'ontologies': ",
+                   crayon::underline(paste0(ontologies, collapse = ", ")),
+                   ". Possible valid values: CC, BP, MF. Analysis will be run ",
+                   "using ",
+                   crayon::underline(paste0(valid_ont, collapse = ",")), ".")
+          )
+        )
+      )
+      ontologies <- valid_ont
     }
   }
   iterated_df <- iterators::isplit(dat, as.factor(dat$set_label))
