@@ -30,7 +30,7 @@
 #'
 #' @export
 
-map_genes <- function(dat, id = "symbol", species = "human"){
+map_genes <- function(dat, id, species){
   # verify 'species' parameter
   species <- verify_input(input_name = species,
                           input_choices = c("human", "mouse"),
@@ -55,7 +55,7 @@ map_genes <- function(dat, id = "symbol", species = "human"){
   xx <- annotate::lookUp(dat$id, metadata_basename, annotation_element,
                          load = TRUE)
   # each symbol/ensembl might map to more than one ENTREZ id.
-  map_length <- sapply(xx, length)
+  map_length <- sapply(xx, function(x) length(which(!is.na(x))))
   map_count <- data.frame(matches = unname(map_length), id = names(map_length))
   # summarize
   map_summary <- map_count %>%
@@ -71,12 +71,8 @@ map_genes <- function(dat, id = "symbol", species = "human"){
   )
   print(map_summary)
   message(
-    stringr::str_wrap(
-      crayon::green(
-        paste0("If more than 1 matches are found to ENTREZ ids, only the ",
+      crayon::green("If more than 1 match to ENTREZ id is found, only the ",
                "first match is used.")
-      )
-    )
   )
   # extract the first matches only
   first_match_entrez <- sapply(xx, "[", 1)
