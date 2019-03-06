@@ -24,8 +24,8 @@ verify_input <- function(input_name, input_choices, input_default){
         stop(
           stringr::str_wrap(
             crayon::red(
-              paste0("Unexpected value for ", crayon::underline(input_name),
-                     " was provided; please provide one of ",
+              paste0("Unexpected value has been provided. ",
+                     "Please provide one of ",
                      crayon::underline(paste0(input_choices,
                                               collapse = " or ")),
                      ".")
@@ -37,8 +37,8 @@ verify_input <- function(input_name, input_choices, input_default){
       stop(
         stringr::str_wrap(
           crayon::red(
-            paste0("More than one value for ", crayon::underline(input_name),
-                   " parameter was provided; please provide either ",
+            paste0("More than one value was provided; please provide only one ",
+                   "value, either ",
                    crayon::underline(paste0(input_choices, collapse = " or ")),
                    ".")
           )
