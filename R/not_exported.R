@@ -24,8 +24,8 @@ verify_input <- function(input_name, input_choices, input_default){
         stop(
           stringr::str_wrap(
             crayon::red(
-              paste0("Unexpected value has been provided. ",
-                     "Please provide one of ",
+              paste0("Unexpected value has been provided for the parameter ",
+                     substitute(input_name), "Please provide one of ",
                      crayon::underline(paste0(input_choices,
                                               collapse = " or ")),
                      ".")
@@ -47,9 +47,9 @@ verify_input <- function(input_name, input_choices, input_default){
     }
   } else {
     message(
-      paste0("Using default setting for the parameter ",
-             input_name, ": ",
-             input_default)
+      crayon::yellow(paste0("Using default setting for the parameter ",
+             substitute(input_name), ": ",
+             input_default))
     )
     return(input_default)
   }
