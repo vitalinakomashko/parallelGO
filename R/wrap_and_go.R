@@ -32,6 +32,10 @@
 #' @param run_parallel Boolean indicating whether to run the execution in
 #'  parallel. Default is TRUE. If FALSE parameter \code{cores} will be ignored.
 #'
+#' @param ontologies Optional character vector with ontologies. Valid values:
+#'  CC, BP, MF. If not provided GO enrichment will be run for all categories.
+#'
+#'
 #' @return Data frame with the results of GO enrichment analysis.
 #'
 #' @examples
@@ -47,8 +51,7 @@
 #' out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
 #' id = "symbol", species = "human")
 #'
-#' # Example 3: with ensembl gene ids instead of gene symbols (versions will be
-#' stripped off from ensembl ids if persent):
+#' # Example 3: with ensembl gene ids instead of gene symbols:
 #'
 #' out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
 #' id = "ensembl", species = "human")
@@ -61,7 +64,8 @@
 
 
 wrap_and_go <- function(path, col_names, delim, id, species,
-                        min_set_size, cores, run_parallel = TRUE){
+                        min_set_size, cores, run_parallel = TRUE,
+                        ontologies = c("CC", "BP", "MF")){
   # read file
   dat <- read_file(path = path, col_names = col_names, delim = delim)
   # remove duplicate rows
@@ -74,6 +78,7 @@ wrap_and_go <- function(path, col_names, delim, id, species,
   dat_large_sets <- remove_small_sets(dat_mapped, min_set_size)
   # run GO analysis in parallel
   res <- run_go(dat_large_sets, species = species, universe = universe,
-                         cores = cores, run_parallel = run_parallel)
+                cores = cores, run_parallel = run_parallel,
+                ontologies = ontologies)
   return(res)
 }

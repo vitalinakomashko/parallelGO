@@ -5,7 +5,7 @@
 \title{Main function for running GO analysis in parallel.}
 \usage{
 wrap_and_go(path, col_names, delim, id, species, min_set_size, cores,
-  run_parallel = TRUE)
+  run_parallel = TRUE, ontologies = c("CC", "BP", "MF"))
 }
 \arguments{
 \item{path}{Character string specifying the path to file. This parameter is
@@ -35,6 +35,9 @@ parallel computation. This parameter is optional.}
 
 \item{run_parallel}{Boolean indicating whether to run the execution in
 parallel. Default is TRUE. If FALSE parameter \code{cores} will be ignored.}
+
+\item{ontologies}{Optional character vector with ontologies. Valid values:
+CC, BP, MF. If not provided GO enrichment will be run for all categories.}
 }
 \value{
 Data frame with the results of GO enrichment analysis.
@@ -57,8 +60,7 @@ removed, number of cores will be determined by foreach::getDoParWorkers)
 out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
 id = "symbol", species = "human")
 
-# Example 3: with ensembl gene ids instead of gene symbols (versions will be
-stripped off from ensembl ids if persent):
+# Example 3: with ensembl gene ids instead of gene symbols:
 
 out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
 id = "ensembl", species = "human")
