@@ -25,7 +25,10 @@ read_file <- function(path, col_names, delim){
     stop("File path must be provided")
   } else {
     if (!file.exists(path)) {
-      stop("The file doesn't exist, please provide path to an existing file")
+      stop(
+        crayon::red("ERROR: The file doesn't exist, please provide path to",
+                    "an existing file")
+        )
     } else {
       message(
         crayon::yellow("ATTENTION: For the file to be processed correctly,",
@@ -33,13 +36,17 @@ read_file <- function(path, col_names, delim){
                        "column and the gene set labels are in the second column.")
       )
       if (missing(col_names)) {
-        stop("Please provide TRUE (present) or FALSE (absent) for the
-             'col_names' parameter.")
+        stop(
+          crayon::red("Please provide TRUE (present) or FALSE (absent) for",
+                         "the 'col_names' parameter.")
+          )
       } else {
         col_names <- col_names
       }
       if (missing(delim)) {
-        stop("Please provide a value for 'delim' parameter.")
+        stop(
+          crayon::red("Please provide a value for 'delim' parameter.")
+          )
       } else {
         delim <- delim
       }
@@ -48,30 +55,22 @@ read_file <- function(path, col_names, delim){
                         colClasses = "character",
                         row.names = NULL)
       message(
-        stringr::str_wrap(
-          crayon::green(
-            paste0("SUCCESS: Read the file '", path, "' with ",
-                   nrow(dat), " and ", ncol(dat), " columns.\n")
-          )
-        )
+        crayon::green("SUCCESS: Read the file'", path, "' with",
+                      nrow(dat), "and", ncol(dat), "columns.\n")
       )
       if (ncol(dat) > 2) {
         message(
-          stringr::str_wrap(
-            crayon::yellow("ATTENTION: Found more than two columns in the file,
-                           retaining only the first two.")))
+          crayon::yellow("ATTENTION: Found more than two columns in the file",
+                         "retaining only the first two.")
+        )
         dat <- dat[, 1:2]
       } else if (ncol(dat) < 2) {
         stop(
-          stringr::str_wrap(
-            crayon::red(
-              paste0("ERROR: Need two columns for data processing, received ",
-                     crayon::underline(ncol(dat)), ". Please provide a file ",
-                     "with two columns. First column should contain contain ",
-                     "gene identifiers, second column should contain set ","
-                     labels.")
-            )
-          )
+          crayon::red("ERROR: Need two columns for data processing, received",
+                      crayon::underline(ncol(dat)), ". Please provide a file",
+                      "with two columns. First column should contain contain",
+                      "gene identifiers, second column should contain set",
+                      "labels.")
         )
       }
       colnames(dat) <- c("id", "set_label")

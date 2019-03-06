@@ -62,16 +62,12 @@ map_genes <- function(dat, id, species){
     dplyr::group_by(.data$matches) %>%
     dplyr::summarise(count = n())
   message(
-    stringr::str_wrap(
-      crayon::green(
-        paste0("Summary of the mapping results from the provided ",
-               crayon::underline(id), " to ENTREZ gene identifiers:")
-      )
-    )
+    crayon::green("Summary of the mapping results from the provided",
+                  crayon::underline(id), "to ENTREZ gene identifiers:")
   )
   print(map_summary)
   message(
-      crayon::green("If more than 1 match to ENTREZ id is found, only the ",
+      crayon::green("If more than 1 match to ENTREZ id is found, only the",
                "first match is used.")
   )
   # extract the first matches only
@@ -86,65 +82,46 @@ map_genes <- function(dat, id, species){
     dat_with_match <- dat_with_match[!is.na(dat_with_match$entrez), ]
     if (nrow(dat_with_match) == 0) {
       stop(
-        stringr::str_wrap(
-          crayon::red(
-            paste0("ERROR: The number of rows after mapping identifiers to ",
-                   "ENTREZ gene identifiers is 0. Please verify that you used ",
-                   "correct input values for 'species' and 'id' parameters. ",
-                   "You used ", crayon::underline(species),
-                   " for the 'species' parameter and ",
-                   crayon::underline(id), " for the 'id' parameter.")
-          )
-        )
+          crayon::red("ERROR: The number of rows after mapping identifiers to",
+                   "ENTREZ gene identifiers is 0. Please verify that you used",
+                   "correct input values for 'species' and 'id' parameters.",
+                   "You used", crayon::underline(species),
+                   "for the 'species' parameter and",
+                   crayon::underline(id), "for the 'id' parameter.")
       )
     } else if (nrow(dat_with_match) < nrow(dat) / 2) {
-      warning(
-        stringr::str_wrap(
-          crayon::yellow(
-            paste0("ATTENTION: The number of rows after mapping identifiers ",
-                   "to ENTREZ gene identifiers is less than a half of the ",
-                   " original identifiers provided.  Please verify that you ",
-                   "used correct input values for 'species' or 'id' ",
-                   "parameters. You used ", crayon::underline(species),
-                   " for the 'species' parameter and ", crayon::underline(id),
-                   " for the 'id' parameter.")
-          )
-        )
+      message(
+        crayon::yellow("ATTENTION: The number of rows after mapping identifiers",
+                       "to ENTREZ gene identifiers is less than a half of the",
+                       "original identifiers provided.  Please verify that you",
+                       "used correct input values for 'species' or 'id'",
+                       "parameters. You used ", crayon::underline(species),
+                       "for the 'species' parameter and",
+                       crayon::underline(id), "for the 'id' parameter.")
+
       )
     } else {
       message(
-        stringr::str_wrap(
-          crayon::green(
-            paste0("SUCCESS: Performed mapping to ENTREZ gene identifiers. ",
-                   crayon::underline(nrow(dat_with_match)),
-                   " out of the original ",
-                   crayon::underline(nrow(dat)), " identifiers were mapped.")
-          )
-        )
+        crayon::green("SUCCESS: Performed mapping to ENTREZ gene identifiers.",
+                      crayon::underline(nrow(dat_with_match)),
+                      "out of the original", crayon::underline(nrow(dat)),
+                      "identifiers were mapped.")
       )
     }
   } else {
     message(
-      stringr::str_wrap(
-        crayon::green(
-          paste0("SUCCESS: Performed mapping to ENTREZ gene identifiers. ",
-                 "All identifiers have been mapped")
-        )
+        crayon::green("SUCCESS: Performed mapping to ENTREZ gene identifiers.",
+                      "All identifiers have been mapped.")
       )
-    )
   }
   # remove duplicates
   if (any(duplicated(dat_with_match))) {
     dat_with_match <- unique(dat_with_match)
     message(
-      stringr::str_wrap(
-        crayon::yellow(
-          paste0("ATTENTION: Removed duplicated rows after mapping to ENTREZ",
-                 " gene identifiers. ",
-                 crayon::underline(nrow(dat_with_match)),
-                 " rows remained.")
-        )
-      )
+      crayon::yellow("ATTENTION: Removed duplicated rows after mapping to",
+                     "ENTREZ gene identifiers.",
+                     crayon::underline(nrow(dat_with_match)),
+                     "rows remained.")
     )
   }
   return(dat_with_match)

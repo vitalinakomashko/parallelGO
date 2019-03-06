@@ -22,34 +22,29 @@ verify_input <- function(input_name, input_choices, input_default){
         return(input_name)
       } else {
         stop(
-          stringr::str_wrap(
-            crayon::red(
-              paste0("Unexpected value has been provided for the parameter ",
-                     substitute(input_name), "Please provide one of ",
-                     crayon::underline(paste0(input_choices,
-                                              collapse = " or ")),
-                     ".")
-            )
+          crayon::red(
+            "Unexpected value has been provided for the parameter",
+            substitute(input_name),
+            "Please provide one of",
+            crayon::underline(paste0(input_choices,
+                                     collapse = " or ")),
+            "."
           )
         )
       }
     } else {
       stop(
-        stringr::str_wrap(
-          crayon::red(
-            paste0("More than one value was provided; please provide only one ",
-                   "value, either ",
-                   crayon::underline(paste0(input_choices, collapse = " or ")),
-                   ".")
-          )
+        crayon::red("More than one value was provided; please provide only one",
+                 "value, either ",
+                 crayon::underline(paste0(input_choices, collapse = " or ")),
+                 ".")
         )
-      )
     }
   } else {
     message(
-      crayon::yellow(paste0("Using default setting for the parameter ",
+      crayon::yellow("Using default setting for the parameter",
              substitute(input_name), ": ",
-             input_default))
+             input_default)
     )
     return(input_default)
   }
@@ -110,16 +105,12 @@ remove_errors <- function(dat){
   if("error_warning" %in% dat$ontology) {
     k <- which(dat$ontology == "error_warning")
     message(
-      stringr::str_wrap(
-        crayon::yellow(
-          paste0("GO enrichment generated errors or warnings for the following ",
-                 "sets: ",
-                 crayon::underline(paste0(as.character(dat$set_label[k]),
+      crayon::yellow("GO enrichment generated errors or warnings for the",
+                     "following sets:",
+                     crayon::underline(paste0(as.character(dat$set_label[k]),
                                           collapse = ", ")),
-                 ". These sets are excluded from the output.")
+                     ".These sets are excluded from the output.")
         )
-      )
-    )
     dat <- dat[-k, ]
   }
   return(dat)

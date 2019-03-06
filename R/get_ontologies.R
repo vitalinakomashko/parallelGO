@@ -47,7 +47,8 @@ get_ontology <- function(gene_id, universe, annotation,
   hg_over_test <- GOstats::hyperGTest(params)
   hg_over_results <- GOstats::summary(hg_over_test)
   hg_over_results <- hg_over_results %>%
-    dplyr::mutate(p_bonferroni = stats::p.adjust(.data$Pvalue, method = "bonferroni"),
+    dplyr::mutate(p_bonferroni = stats::p.adjust(.data$Pvalue,
+                                                 method = "bonferroni"),
                   ontology = ontology)
   # rename the columns
   colnames(hg_over_results)[1:7] <- c("goid", "pvalue", "odds_ratio",
@@ -124,37 +125,25 @@ run_go <- function(dat, species = c("human", "mouse"),
       doParallel::registerDoParallel(cores = cores)
       workers <- foreach::getDoParWorkers()
       message(
-        stringr::str_wrap(
-          crayon::green(
-            paste0("Will run GO computation in parallel on ", workers,
-                   " cores using ", foreach::getDoParName(), " backend.")
-          )
-        )
+        crayon::green("Will run GO computation in parallel on", workers,
+                      "cores using", foreach::getDoParName(), "backend.")
       )
     } else {
       doParallel::registerDoParallel()
       workers <- foreach::getDoParWorkers()
       message(
-        stringr::str_wrap(
-          crayon::green(
-            paste0("Parameter 'cores' is not provided. Getting the number of ",
-                   "available cores with foreach::getDoParWorkers(). ",
-                   "GO enrichment will be run in parallel on ",
-                   crayon::underline(workers), " cores using ",
-                   foreach::getDoParName(), " backend.")
-          )
-        )
+        crayon::green("Parameter 'cores' is not provided. Getting the number of",
+                      "available cores with foreach::getDoParWorkers().",
+                      "GO enrichment will be run in parallel on",
+                      crayon::underline(workers), "cores using ",
+                      foreach::getDoParName(), "backend.")
       )
     }
   } else {
     foreach::registerDoSEQ()
     message(
-      stringr::str_wrap(
-        crayon::green(
-          paste0("Parameter run_parallel is FALSE. Computation will be run ",
-                 "sequentially.")
-        )
-      )
+      crayon::green("Parameter run_parallel is FALSE.",
+                    "Computation will be run sequentially.")
     )
   }
 
@@ -171,29 +160,22 @@ run_go <- function(dat, species = c("human", "mouse"),
   } else {
     if (!any(ontologies %in% c("BP", "CC", "MF"))) {
       stop(
-        stringr::str_wrap(
-          crayon::red(
-            paste0("ERROR: Please provide valid values for the parameter ",
-                   "'ontologies'. Possible valid values: CC, BP, MF. ",
-                   "You provided: ",
-                   crayon::underline(paste0(ontologies, collapse = ",")), ".")
-          )
-        )
+        crayon::red("ERROR: Please provide valid values for the parameter",
+                    "'ontologies'. Possible valid values: CC, BP, MF. ",
+                    "You provided:",
+                    crayon::underline(paste0(ontologies, collapse = ",")), ".")
       )
     } else {
       k <- ontologies %in% c("BP", "CC", "MF")
       valid_ont <- ontologies[k]
       message(
-        stringr::str_wrap(
-          crayon::yellow(
-            paste0("ATTENTION: You provided the following values for the ",
-                   "the parameter 'ontologies': ",
-                   crayon::underline(paste0(ontologies, collapse = ", ")),
-                   ". Possible valid values: CC, BP, MF. Analysis will be run ",
-                   "using ",
-                   crayon::underline(paste0(valid_ont, collapse = ",")), ".")
-          )
-        )
+        crayon::yellow("ATTENTION: You provided the following values for the",
+                       "the parameter 'ontologies': ",
+                       crayon::underline(paste0(ontologies, collapse = ", ")),
+                       ". Possible valid values: CC, BP, MF. Analysis will be",
+                       "run using",
+                       crayon::underline(paste0(valid_ont, collapse = ",")),
+                       ".")
       )
       ontologies <- valid_ont
     }
