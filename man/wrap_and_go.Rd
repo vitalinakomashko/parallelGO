@@ -5,7 +5,7 @@
 \title{Main function for running GO analysis in parallel.}
 \usage{
 wrap_and_go(path, col_names, delim, id, species, min_set_size, cores,
-  run_parallel = TRUE, ontologies = c("CC", "BP", "MF"))
+  run_parallel = TRUE, ontologies)
 }
 \arguments{
 \item{path}{Character string specifying the path to file. This parameter is

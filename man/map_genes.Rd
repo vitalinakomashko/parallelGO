@@ -4,7 +4,7 @@
 \alias{map_genes}
 \title{Map gene identifiers to ENTREZ gene}
 \usage{
-map_genes(dat, id = "symbol", species = "human")
+map_genes(dat, id, species)
 }
 \arguments{
 \item{dat}{Data frame with two columns: \strong{id} and \strong{set_label}.}
