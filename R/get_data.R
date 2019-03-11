@@ -56,11 +56,11 @@ read_file <- function(path, col_names, delim){
                         row.names = NULL)
       message(
         crayon::green("SUCCESS: Read the file'", path, "' with",
-                      nrow(dat), "and", ncol(dat), "columns.\n")
+                      nrow(dat), "and", ncol(dat), "columns.")
       )
       if (ncol(dat) > 2) {
         message(
-          crayon::yellow("ATTENTION: Found more than two columns in the file",
+          crayon::yellow("ATTENTION: Found more than two columns in the file,",
                          "retaining only the first two.")
         )
         dat <- dat[, 1:2]
