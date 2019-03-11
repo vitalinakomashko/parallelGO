@@ -56,8 +56,8 @@ out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
 ```
 Mouse species and ensembl identifiers are also supported.
 
-**IMPORTANT** Please prepare your file so that gene identifiers are in the first 
-column and set labels are in the second column.
+**IMPORTANT** Please prepare your file with gene identifiers in the first 
+column and set labels in the second column.
 
 `wrap_and_go` will read the file, perform some minor cleaning, map 
 identifiers to ENTREZ gene identifiers and run GO enrichment analysis in
@@ -81,8 +81,8 @@ dat_large_sets <- remove_small_sets(dat_mapped, min_set_size = 30)
 res <- run_go(dat_large_sets, species = "human", universe = universe)
 ```
 
-In addition, we provide a function for filtering p-values (raw or adjusted)
-which can be called after either scenario described above:
+In addition, we provide a function for filtering p-values ("raw"" or "adjusted" 
+(default)) which can be called on the final result:
 
 ```r
 res_filtered <- filter_pvalues(res, cutoff = 0.05)
@@ -102,7 +102,7 @@ str(human_symbol)
 
 ## Benchmarking using the example dataset 
 
-We benchmarked performance using the code above and the sample dataset.
+We benchmarked performance using the code above and the included example dataset.
 
 __macOS: MacBook Pro 2.7 GHz Intel Core i7, 16 Gb 2133 MHz LPDDR3.__
 
@@ -169,4 +169,23 @@ with foreach::getDoParWorkers(). GO enrichment will be run in parallel on
 3 cores using doParallelSNOW backend.
    user  system elapsed 
    0.14    0.03  247.44
+```
+
+## Test with a real-life sized dataset
+
+We also ran a test with a dataset comprised of 17,352 genes separated in 632 
+sets (minimum number of genes in a set was 1; maximum number of genes was 479). 
+Without filtering on the minimum number of genes in a set parallel execution 
+using 4 workers took 26,798.826 seconds (7.4 hours) and serial execution 
+took 63,020.940 seconds (17.5 hours) on macOS (specs above).
+
+## Too chatty?
+
+The functions in the package are pretty 'chatty' providing information about
+each step. If you don't like seeing these messages, wrap functions in 
+`suppressMessages()`.
+
+``` r
+out <- suppressMessages(wrap_and_go("path_to_my_file", col_names = TRUE, 
+delim = ",", id = "symbol", species = "human"))
 ```
