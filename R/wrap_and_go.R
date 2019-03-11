@@ -65,17 +65,17 @@
 
 wrap_and_go <- function(path, col_names, delim, id, species,
                         min_set_size, cores, run_parallel = TRUE,
-                        ontologies = c("CC", "BP", "MF")){
+                        ontologies){
   # read file
   dat <- read_file(path = path, col_names = col_names, delim = delim)
   # remove duplicate rows
   dat_clean <- deduplicate_rows(dat)
   # map to ENTREZ gene identifiers
-  dat_mapped <- map_genes(dat_clean, id, species)
+  dat_mapped <- map_genes(dat_clean, id = id, species = species)
   # extract the universe for hypergeometric test
   universe <- unique(dat_mapped$entrez)
   # remove sets with a small number of genes
-  dat_large_sets <- remove_small_sets(dat_mapped, min_set_size)
+  dat_large_sets <- remove_small_sets(dat_mapped, min_set_size = min_set_size)
   # run GO analysis in parallel
   res <- run_go(dat_large_sets, species = species, universe = universe,
                 cores = cores, run_parallel = run_parallel,
