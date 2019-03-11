@@ -31,7 +31,7 @@ deduplicate_rows <- function(dat){
     )
   } else {
     message(
-      crayon::green("No duplicate rows have been identified.")
+      crayon::green("No duplicated rows have been identified.")
     )
   }
   return(dat)
@@ -69,7 +69,7 @@ remove_small_sets <- function(dat, min_set_size){
       )
     } else {
       message(
-        crayon::green("Total number of sets in the dataset is",
+        crayon::green("Total number of sets in the data is",
                       crayon::underline(length(unique(dat$set_label))), ".")
       )
       # calculate the number of genes in each set
@@ -114,7 +114,9 @@ remove_small_sets <- function(dat, min_set_size){
     }
     } else {
       message(
-        crayon::green("Parameter 'min_set_size' is not provided.",
+        crayon::green("Total number of sets in the data is",
+                      crayon::underline(length(unique(dat$set_label))),
+                      ". Parameter 'min_set_size' is not provided.",
                       "No gene sets will be removed.")
       )
     }
