@@ -60,12 +60,13 @@ map_genes <- function(dat, id, species){
   # summarize
   map_summary <- map_count %>%
     dplyr::group_by(.data$matches) %>%
-    dplyr::summarise(count = n())
+    dplyr::summarise(count = n()) %>%
+    dplyr::mutate(report = paste(.data$count, .data$matches, sep = ": "))
   message(
-    crayon::green("Summary of the mapping results from the provided",
-                  crayon::underline(id), "to ENTREZ gene identifiers:")
+    crayon::green("Summary of provided identifiers and mapped ENTREZ genes:",
+                  paste0(map_summary$report, collapse = "; "), ".")
   )
-  print(map_summary)
+  #print(map_summary)
   message(
       crayon::green("If more than 1 match to ENTREZ id is found, only the",
                "first match is used.")
