@@ -35,7 +35,7 @@ verify_input <- function(input_name, input_choices, input_default){
     } else {
       stop(
         crayon::red("More than one value was provided; please provide only one",
-                 "value, either ",
+                 "value, either",
                  crayon::underline(paste0(input_choices, collapse = " or ")),
                  ".")
         )
@@ -43,7 +43,7 @@ verify_input <- function(input_name, input_choices, input_default){
   } else {
     message(
       crayon::yellow("Using default setting for the parameter",
-             substitute(input_name), ": ",
+             substitute(input_name), ":",
              input_default)
     )
     return(input_default)
