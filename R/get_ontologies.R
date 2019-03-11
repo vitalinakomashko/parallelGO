@@ -132,7 +132,7 @@ run_go <- function(dat, species = c("human", "mouse"),
       doParallel::registerDoParallel()
       workers <- foreach::getDoParWorkers()
       message(
-        crayon::green("Parameter 'cores' is not provided. Getting the number of",
+        crayon::yellow("Parameter 'cores' is not provided. Getting the number of",
                       "available cores with foreach::getDoParWorkers().",
                       "GO enrichment will be run in parallel on",
                       crayon::underline(workers), "cores using ",
@@ -142,7 +142,7 @@ run_go <- function(dat, species = c("human", "mouse"),
   } else {
     foreach::registerDoSEQ()
     message(
-      crayon::green("Parameter run_parallel is FALSE.",
+      crayon::yellow("Parameter run_parallel is FALSE.",
                     "Computation will be run sequentially.")
     )
   }
@@ -157,11 +157,15 @@ run_go <- function(dat, species = c("human", "mouse"),
   }
   if (missing(ontologies)) {
     ontologies <- c("BP", "CC", "MF")
+    message(
+      crayon::yellow("Parameter 'ontologies' is not provided.",
+                     "Analysis will be run for CC, BP and MF ontologies.")
+    )
   } else {
     if (!any(ontologies %in% c("BP", "CC", "MF"))) {
       stop(
         crayon::red("ERROR: Please provide valid values for the parameter",
-                    "'ontologies'. Possible valid values: CC, BP, MF. ",
+                    "'ontologies'. Possible valid values: CC, BP, MF.",
                     "You provided:",
                     crayon::underline(paste0(ontologies, collapse = ",")), ".")
       )
@@ -170,11 +174,11 @@ run_go <- function(dat, species = c("human", "mouse"),
       valid_ont <- ontologies[k]
       message(
         crayon::yellow("ATTENTION: You provided the following values for the",
-                       "the parameter 'ontologies': ",
+                       "the parameter 'ontologies':",
                        crayon::underline(paste0(ontologies, collapse = ", ")),
                        ". Possible valid values: CC, BP, MF. Analysis will be",
                        "run using",
-                       crayon::underline(paste0(valid_ont, collapse = ",")),
+                       crayon::underline(paste0(valid_ont, collapse = ", ")),
                        ".")
       )
       ontologies <- valid_ont
