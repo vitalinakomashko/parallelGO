@@ -1,32 +1,51 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-parallelGO <img src="man/figures/logo.png" align="right" height=140/>
-=====================================================================
 
-The goal of `parallelGO` is to provide parallel implementation (using [foreach](https://cran.r-project.org/web/packages/foreach/) package) for gene ontology (GO) enrichment analysis given labeled sets of genes. The project was inspired by the need to do a fast evaluation of biological significance of identified clusters (also known as modules or sets) within gene networks.
+# parallelGO <img src="man/figures/logo.png" align="right" height=140/>
 
-Installation
-------------
+The goal of `parallelGO` is to provide parallel implementation (using
+[foreach](https://cran.r-project.org/web/packages/foreach/) package) for
+gene ontology (GO) enrichment analysis given labeled sets of genes. The
+project was inspired by the need to do a fast evaluation of biological
+significance of identified clusters (also known as modules or sets)
+within gene networks.
 
-You can install the released version of parallelGO from [github](https://github.com) with:
+## News and updates
+
+**2019-05-07** The package has stopped working when the provided
+identifiers are ensembl genes. We are investigating the issue. It still
+works with gene symbols.
+
+## Installation
+
+You can install the released version of parallelGO from
+[github](https://github.com) with:
 
 ``` r
 install.packages("remotes")
 remotes::install_github("vitalinakomashko/parallelGO")
 ```
 
-This package requires two Bioconductor packages: [annotate](https://www.bioconductor.org/packages/release/bioc/html/annotate.html) and [GOstats](https://bioconductor.org/packages/release/bioc/html/GOstats.html). If you don't have these packages installed you can either install them by following instructions on the pages for these packages or, prior to installation of parallelGO from github, run this line in R:
+This package requires two Bioconductor packages:
+[annotate](https://www.bioconductor.org/packages/release/bioc/html/annotate.html)
+and
+[GOstats](https://bioconductor.org/packages/release/bioc/html/GOstats.html).
+If you don’t have these packages installed you can either install them
+by following instructions on the pages for these packages or, prior to
+installation of parallelGO from github, run this line in R:
 
 ``` r
 setRepositories(ind = 1:3)
 ```
 
-This will set the repositories to CRAN, BioC software and BioC annotation. This idea was found [here](https://stackoverflow.com/a/20479243/1655368).
+This will set the repositories to CRAN, BioC software and BioC
+annotation. This idea was found
+[here](https://stackoverflow.com/a/20479243/1655368).
 
-How to use
-----------
+## How to use
 
-If you have a file with human gene symbols where each symbol is assigned to a gene set you can run the analysis by invoking the following code:
+If you have a file with human gene symbols where each symbol is assigned
+to a gene set you can run the analysis by invoking the following code:
 
 ``` r
 library(parallelGO)
@@ -36,11 +55,17 @@ out <- wrap_and_go("path_to_my_file", col_names = TRUE, delim = ",",
 
 Mouse species and ensembl identifiers are also supported.
 
-**IMPORTANT** Please prepare your file with gene identifiers in the first column and set labels in the second column.
+**IMPORTANT** Please prepare your file with gene identifiers in the
+first column and set labels in the second column.
 
-`wrap_and_go` will read the file, perform some minor cleaning, map identifiers to ENTREZ gene identifiers and run GO enrichment analysis in parallel. Please read documentation for `wrap_and_go` to learn about additional parameters.
+`wrap_and_go` will read the file, perform some minor cleaning, map
+identifiers to ENTREZ gene identifiers and run GO enrichment analysis in
+parallel. Please read documentation for `wrap_and_go` to learn about
+additional parameters.
 
-If you don't have a file, but rather a data frame (`dat`) in memory, you can perform your analyses step by step in the same manner as it as performed by `wrap_and_go`:
+If you don’t have a file, but rather a data frame (`dat`) in memory, you
+can perform your analyses step by step in the same manner as it as
+performed by `wrap_and_go`:
 
 ``` r
 # remove duplicated rows if present:
@@ -55,16 +80,17 @@ dat_large_sets <- remove_small_sets(dat_mapped, min_set_size = 30)
 res <- run_go(dat_large_sets, species = "human", universe = universe)
 ```
 
-In addition, we provide a function for filtering p-values ("raw"" or "adjusted" (default)) which can be called on the final result:
+In addition, we provide a function for filtering p-values (“raw”" or
+“adjusted” (default)) which can be called on the final result:
 
 ``` r
 res_filtered <- filter_pvalues(res, cutoff = 0.05)
 ```
 
-Example dataset
----------------
+## Example dataset
 
-The package also provides a small example dataset for illustration purposes
+The package also provides a small example dataset for illustration
+purposes
 
 ``` r
 data("human_symbol")
@@ -82,10 +108,10 @@ str(human_symbol)
 #>  $ set_label: int  24 23 24 156 159 24 158 157 158 156 ...
 ```
 
-Benchmarking using the example dataset
---------------------------------------
+## Benchmarking using the example dataset
 
-We benchmarked performance using the code above and the included example dataset.
+We benchmarked performance using the code above and the included example
+dataset.
 
 **macOS: MacBook Pro 2.7 GHz Intel Core i7, 16 Gb 2133 MHz LPDDR3.**
 
@@ -116,7 +142,8 @@ system.time(res <- run_go(dat_large_sets,
        user  system elapsed 
     243.602  55.488 108.968
 
-**PC Windows 10 Pro, version 1809. Intel(R) Core(TM) i5-4300U CPU @ 1900 GHz 2.5 GHz, 8 Gb RAM**
+**PC Windows 10 Pro, version 1809. Intel(R) Core(TM) i5-4300U CPU @ 1900
+GHz 2.5 GHz, 8 Gb RAM**
 
 Serial execution:
 
@@ -128,7 +155,7 @@ system.time(res <- run_go(dat_large_sets,
 ```
 
     Parameter run_parallel is FALSE. Computation will be run sequentially.
-
+    
        user  system elapsed 
      255.17  108.25  368.23
 
@@ -146,15 +173,21 @@ system.time(res <- run_go(dat_large_sets,
        user  system elapsed 
        0.14    0.03  247.44
 
-Test with a real-life sized dataset
------------------------------------
+## Test with a real-life sized dataset
 
-We also ran a test with a dataset comprised of 17,352 genes separated in 632 sets (minimum number of genes in a set was 1; maximum number of genes was 479). Without filtering on the minimum number of genes in a set parallel execution using 4 workers took 26,798.826 seconds (7.4 hours) and serial execution took 63,020.940 seconds (17.5 hours) on macOS (specs above).
+We also ran a test with a dataset comprised of 17,352 genes separated in
+632 sets (minimum number of genes in a set was 1; maximum number of
+genes was 479). Without filtering on the minimum number of genes in a
+set parallel execution using 4 workers took 26,798.826 seconds (7.4
+hours) and serial execution took 63,020.940 seconds (17.5 hours) on
+macOS (specs above).
 
-Too chatty?
------------
+## Too chatty?
 
-The functions in the package are pretty 'chatty' providing information about each step. If you don't like seeing these messages, wrap functions in `suppressMessages()`.
+The functions in the package are pretty ‘chatty’ providing information
+about each step. If you don’t like seeing these messages, wrap functions
+in
+`suppressMessages()`.
 
 ``` r
 out <- suppressMessages(wrap_and_go("path_to_my_file", col_names = TRUE, 

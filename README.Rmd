@@ -21,6 +21,9 @@ project was inspired by the need to do a fast evaluation of biological
 significance of identified clusters (also known as modules or sets) within gene 
 networks.
 
+## News and updates
+
+__2019-05-07__ The package has stopped working when the provided identifiers are ensembl genes. We are investigating the issue. It still works with gene symbols.
 
 ## Installation
 
